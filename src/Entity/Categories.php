@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\CategoriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategoriesRepository::class)]
@@ -19,7 +18,7 @@ class Categories
     #[ORM\Column(length: 80)]
     private ?string $cat_nom = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT)]
     private ?string $cat_description = null;
 
     /**
@@ -83,12 +82,16 @@ class Categories
     public function removePlat(Plats $plat): static
     {
         if ($this->plats->removeElement($plat)) {
-            // set the owning side to null (unless already changed)
             if ($plat->getCategorie() === $this) {
                 $plat->setCategorie(null);
             }
         }
 
         return $this;
+    }
+    // Add the __toString method here
+    public function __toString(): string
+    {
+        return $this->cat_nom; // This ensures that the category name is displayed as a string
     }
 }

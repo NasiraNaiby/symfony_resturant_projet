@@ -33,4 +33,17 @@ class AppFixtures extends Fixture
 
         $manager->flush();
     }
+
+    // public function load(ObjectManager $manager): void
+    // {
+    //     for ($i = 0; $i < 5; $i++) {
+    //         $categorie = new Categories();
+    //         $categorie->setCatNom('Category ' . $i);
+    //         $categorie->setCatDescription('Description for Category ' . $i);
+
+    //         $manager->persist($categorie);
+    //     }
+
+    //     $manager->flush();
+    // }
 }

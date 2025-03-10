@@ -26,8 +26,8 @@ class Plats
     #[ORM\Column(type: Types::TEXT)]
     private ?string $plat_photo = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $active = null;
+    #[ORM\Column(type: 'boolean', options: ['default' => false])] // Define as Boolean with default
+    private ?bool $active = false; // Default value is inactive
 
     #[ORM\ManyToOne(inversedBy: 'plats')]
     #[ORM\JoinColumn(nullable: false)]
@@ -86,12 +86,12 @@ class Plats
         return $this;
     }
 
-    public function getActive(): ?string
+    public function getActive(): ?bool // Update type to Boolean
     {
         return $this->active;
     }
 
-    public function setActive(string $active): static
+    public function setActive(bool $active): static // Update type to Boolean
     {
         $this->active = $active;
 

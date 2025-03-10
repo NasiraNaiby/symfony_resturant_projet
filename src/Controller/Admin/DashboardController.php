@@ -13,11 +13,22 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use App\Entity\Users;
 use Symfony\Component\HttpFoundation\Response;
 
-#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
+ #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
+// #[AdminDashboard(routePath: '/admin', routeName: 'admin', allowedControllers: [
+//     PlatsCrudController::class,
+//     CategoiresCrudController::class,
+//     CommandsCrudController::class,
+//     PanierCrudContorller::class,
+//     UsersCrudController::class
+// ])]
 class DashboardController extends AbstractDashboardController
 {
     public function index(): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('app_login'); // Redirect to login
+        }
+     //   return $this->render('admin/index.html.twig');
       return $this->render('admin/dashboard.html.twig');
     }
 

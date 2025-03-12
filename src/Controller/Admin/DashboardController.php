@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use App\Entity\Users;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RequestStack;
 
  #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 // #[AdminDashboard(routePath: '/admin', routeName: 'admin', allowedControllers: [
@@ -23,13 +24,30 @@ use Symfony\Component\HttpFoundation\Response;
 // ])]
 class DashboardController extends AbstractDashboardController
 {
+    private RequestStack $requestStack;
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
     public function index(): Response
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return $this->redirectToRoute('app_login'); // Redirect to login
         }
-     //   return $this->render('admin/index.html.twig');
-      return $this->render('admin/dashboard.html.twig');
+
+        $session = $this->requestStack->getSession();
+        $session->invalidate();
+
+        // Prevent caching of the admin dashboard page
+        $response = $this->render('admin/dashboard.html.twig');
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+
+        return $response;
+
+
+      //return $this->render('admin/dashboard.html.twig');
     }
 
     public function configureDashboard(): Dashboard

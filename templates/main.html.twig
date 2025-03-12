@@ -51,13 +51,13 @@
                             </li>
                            
                             <li><a class="dropdown-item text-center"> <!-- <?php echo htmlspecialchars($display_name); ?> --></a></li>
-                            <li><a  href="../clients/clients.php"    class="dropdown-item text-center">Profile</a></li>
+                            <!-- <li><a  href="../clients/clients.php"    class="dropdown-item text-center">Profile</a></li> -->
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/clients/logout.php">Logout</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_logout')}}">Logout</a></li>
                         </ul>
                     </div>
                 <!-- <?php else: ?> -->
-                    <a href="{{ path('clients_index')}}" class="ms-4" style="text-decoration: none;">
+                    <a href="{{ path('app_login')}}" class="ms-4" style="text-decoration: none;">
                         <i class="bi bi-person-circle" style="font-size: 20px; color: #ffffff;"></i>
                     </a>
                 <!-- <?php endif; ?> -->

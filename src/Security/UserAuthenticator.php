@@ -53,6 +53,8 @@ public function onAuthenticationSuccess(Request $request, TokenInterface $token,
     $roles = $token->getUser()->getRoles();
     if (in_array('ROLE_ADMIN', $roles, true)) {
         return new RedirectResponse($this->urlGenerator->generate('admin')); // Redirect admins to the dashboard.
+    }else {
+        return new RedirectResponse($this->urlGenerator->generate('clients_index')); // Redirect client to the profile.
     }
 
     // Redirect regular users to the homepage (or any other route).

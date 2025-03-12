@@ -38,8 +38,9 @@ final class MainController extends AbstractController{
     }
 
     #[Route('/clients', name: 'clients_index')]
+    #[IsGranted('ROLE_USER')] // Allow only users with ROLE_USER
     public function clients(): Response
-    {
+    {   
         return $this->render('clients/index.html.twig');
     }
   

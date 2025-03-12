@@ -20,8 +20,8 @@ class Plats
     #[ORM\Column(type: Types::TEXT)]
     private ?string $plat_description = null;
 
-    #[ORM\Column]
-    private ?int $plat_prix = null;
+    #[ORM\Column(type: "float")] // Ensure the price is stored as a float
+    private ?float $plat_prix = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $plat_photo = null;
@@ -62,12 +62,13 @@ class Plats
         return $this;
     }
 
-    public function getPlatPrix(): ?int
+    // The getter and setter for plat_prix are already defined correctly for a float type.
+    public function getPlatPrix(): ?float
     {
         return $this->plat_prix;
     }
 
-    public function setPlatPrix(int $plat_prix): static
+    public function setPlatPrix(float $plat_prix): static
     {
         $this->plat_prix = $plat_prix;
 

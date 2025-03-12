@@ -57,43 +57,38 @@
           </div>
         </div>
           
-            <!-- start of platA -->
+            <!-- start of (tacos) -->
      <div class="bg pb-3">
-             <div class="container p-1" id="taco">
-                <div class="row mt-5">
-                     <h1 class=" fw-bold">
-                        Taco <span class="text-warning">(Mexicain)</span> 
-                     </h1>
-                </div>
-             </div> 
-              <!-- card 1 --> 
-            <div class="container mb-5 pb-3 ">
-              <div class="row ">
-              <?php
-              $sql = "SELECT plats.platName, plats.platDescription, plats.platPrice, plats.platPhoto 
-                      FROM plats 
-                      JOIN categorie ON plats.catId = categorie.catId 
-                      WHERE categorie.catName = 'tacos'";
-              $stmt = $pdo->query($sql);
-              
-              echo '<div class="row">';
-              while ($row = $stmt->fetch()) {
-                  echo '<div class="col-lg-3 col-md-6 col-sm-12">';
-                  echo '  <div class="card border-0 p-0">';
-                  echo '    <div class="menu1-item">';
-                  echo '      <img src="../src/uploads/'. $row["platPhoto"] . '" class="card-img-categori " alt="image">';
-                  echo '    </div>';
-                  echo '    <div class="card-body">';
-                  echo '      <span>' . $row["platName"] . '</span><p class="card-text">' . $row["platPrice"] . '</p>';
-                  echo '      <button class="btn-add-to-cart add-to-cart">Ajouter</button>';
-                  echo '    </div>';
-                  echo '  </div>';
-                  echo '</div>';
-              }
-              echo '</div>';
-?>
-             </div>
-          </div>
+
+      <div class="container p-1" id="taco">
+        <div class="row mt-5">
+             <h1 class=" fw-bold">
+                Taco <span class="text-warning">(Mexicain)</span> 
+             </h1>
+        </div>
+     </div>
+      <div class="container mb-5 pb-3 ">
+            <div class="row">
+                {% for plat in plats %}
+                    <div class="col-lg-3 col-md-6 col-sm-12">
+                        <div class="card border-0 p-0">
+                            <div class="menu1-item">
+                                <img src="{{ asset('uploads/' ~ plat.platPhoto) }}" class="card-img-categori" alt="image">
+                            </div>
+                            <div class="card-body">
+                                <span>{{ plat.platNom }}</span> <!-- Updated to platNom -->
+                                <p class="card-text">{{ plat.platPrix | number_format(2, '.', ',') }}</p>
+                                <button class="btn-add-to-cart add-to-cart">Ajouter</button>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <p>Aucun plat trouvé.</p>
+                {% endfor %}
+            </div>
+    </div>
+    
+          
               <!-- start of platB -->
                <div class="container  p-1" id="fastfood">
                 <div class="row">
@@ -106,32 +101,21 @@
       
             <div class="container position-relative mb-5 pb-3">
               <div class="owl-carousel owl-theme carousel-one">
-                <?php
-                // SQL query to select plats belonging to burger and pizza categories
-                $sql = "SELECT plats.platName, plats.platDescription, plats.platPrice, plats.platPhoto 
-                        FROM plats 
-                        JOIN categorie ON plats.catId = categorie.catId 
-                        WHERE categorie.catName IN ('burger', 'pizza')";
-                $stmt = $pdo->query($sql);
-
-                if ($stmt) {
-                    while ($row = $stmt->fetch()) {
-                        echo '<div class="item">';
-                        echo '  <div class="card border-0 p-0">';
-                        echo '    <div class="menu1-item">';
-                        echo '      <img src="../src/uploads/' . $row["platPhoto"] . '" class="card-img-categori" alt="image">';
-                        echo '    </div>';
-                        echo '    <div class="card-body">';
-                        echo '      <span>' . $row["platName"] . '</span><p class="card-text">' . $row["platPrice"] . '</p>';
-                        echo '      <button class="btn-add-to-cart add-to-cart">Ajouter</button>';
-                        echo '    </div>';
-                        echo '  </div>';
-                        echo '</div>';
-                    }
-                } else {
-                    echo "Error: " . $pdo->errorInfo()[2];
-                }
-                ?>
+                    {% for fastfood in fastfoods %}
+                        <div class="item">
+                          <div class="card border-0 p-0">
+                            <div class="menu1-item">
+                              <img src="{{ asset('uploads/' ~ fastfood.platPhoto) }}" class="card-img-categori" alt="image">
+                            </div>
+                            <div class="card-body">
+                              <span>{{ fastfood.platNom }} </span><p class="card-text">{{ fastfood.platPrix | number_format(2, '.', ',') }}</p>
+                              <button class="btn-add-to-cart add-to-cart">Ajouter</button>
+                            </div>
+                          </div>
+                       </div>
+                    {% else %}
+                    <p>Aucun plat trouvé.</p>
+                {% endfor %}
           </div>
       </div>
            
@@ -145,33 +129,21 @@
          </div>
          <div class="container position-relative mb-5 pb-3  ">
           <div class="owl-carousel owl-theme carousel-one">
-              <?php
-              // SQL query to select plats belonging to seaFood
-              $sql = "SELECT plats.platName, plats.platDescription, plats.platPrice, plats.platPhoto 
-                      FROM plats 
-                      JOIN categorie ON plats.catId = categorie.catId 
-                      WHERE categorie.catName ='sea food'";
-              $stmt = $pdo->query($sql);
-
-              if ($stmt) {
-                  while ($row = $stmt->fetch()) {
-                      echo '<div class="item">';
-                      echo '  <div class="card border-0 p-0">';
-                      echo '    <div class="menu1-item">';
-                      echo '      <img src="../src/uploads/' . $row["platPhoto"] . '" class="card-img-categori" alt="image">';
-                      echo '    </div>';
-                      echo '    <div class="card-body">';
-                      echo '      <span>' . $row["platName"] . '</span><p class="card-text">' . $row["platPrice"] . '</p>';
-                      echo '      <button class="btn-add-to-cart add-to-cart">Ajouter</button>';
-                      echo '    </div>';
-                      echo '  </div>';
-                      echo '</div>';
-                  }
-              } else {
-                  echo "Error: " . $pdo->errorInfo()[2];
-              }
-              ?>
-          
+             {% for seafood in seafoods %}
+                     <div class="item">
+                       <div class="card border-0 p-0">
+                         <div class="menu1-item">
+                           <img src="{{ asset('uploads/' ~ seafood.platPhoto) }}" class="card-img-categori" alt="image">
+                         </div>
+                         <div class="card-body">
+                           <span>{{ seafood.platNom }}</span><p class="card-text">{{ seafood.platPrix | number_format(2, '.', ',') }}</p>
+                           <button class="btn-add-to-cart add-to-cart">Ajouter</button>
+                         </div>
+                       </div>
+                     </div>
+                     {% else %}
+                      <p>Aucune plat trouvé</p>
+                  {% endfor %}
           </div>
       </div>
       
@@ -185,32 +157,21 @@
      </div>
      <div class="container position-relative mb-5 pb-3  ">
       <div class="owl-carousel owl-theme carousel-one">
-            <?php
-            // SQL query to select plats belonging to petit-déjeuner
-            $sql = "SELECT plats.platName, plats.platDescription, plats.platPrice, plats.platPhoto 
-                    FROM plats 
-                    JOIN categorie ON plats.catId = categorie.catId 
-                    WHERE categorie.catName = 'Petit-déjeuner'";
-            $stmt = $pdo->query($sql);
-
-            if ($stmt) {
-                while ($row = $stmt->fetch()) {
-                    echo '<div class="item">';
-                    echo '  <div class="card border-0 p-0">';
-                    echo '    <div class="menu1-item">';
-                    echo '      <img src="../src/uploads/' . $row["platPhoto"] . '" class="card-img-categori" alt="image">';
-                    echo '    </div>';
-                    echo '    <div class="card-body">';
-                    echo '      <span>' . $row["platName"] . '</span><p class="card-text">' . $row["platPrice"] . '</p>';
-                    echo '      <button class="btn-add-to-cart add-to-cart">Ajouter</button>';
-                    echo '    </div>';
-                    echo '  </div>';
-                    echo '</div>';
-                }
-            } else {
-                echo "Error: " . $pdo->errorInfo()[2];
-            }
-            ?>
+          {% for pd in pds %}
+                    <div class="item">
+                      <div class="card border-0 p-0">
+                        <div class="menu1-item">
+                          <img src="{{ asset('uploads/' ~ pd.platPhoto )}}" class="card-img-categori" alt="image">
+                        </div>
+                        <div class="card-body">
+                          <span>{{ pd.platNom }}</span><p class="card-text">{{ pd.platPrix | number_format(2, '.', '.')}}</p>
+                          <button class="btn-add-to-cart add-to-cart">Ajouter</button>
+                        </div>
+                      </div>
+                    </div>
+                {% else %}
+                <p>Aucune plat trouvé</p>
+                {% endfor %}
 
       </div>
   </div>
@@ -222,32 +183,25 @@
                   </h1>
               </div>
           </div> 
+
           <div class="container mb-5 pb-3 ">
             <div class="row ">
-            <?php
-              $sql = "SELECT plats.platName, plats.platDescription, plats.platPrice, plats.platPhoto 
-                      FROM plats 
-                      JOIN categorie ON plats.catId = categorie.catId 
-                      WHERE categorie.catName = 'Salad'";
-              $stmt = $pdo->query($sql);
-              
-              echo '<div class="row">';
-              while ($row = $stmt->fetch()) {
-                  echo '<div class="col-lg-3 col-md-6 col-sm-12">';
-                  echo '  <div class="card border-0 p-0">';
-                  echo '    <div class="menu1-item">';
-                  echo '      <img src="../src/uploads/'. $row["platPhoto"] . '" class="card-img-categori " alt="image">';
-                  echo '    </div>';
-                  echo '    <div class="card-body">';
-                  echo '      <span>' . $row["platName"] . '</span><p class="card-text">' . $row["platPrice"] . '</p>';
-                  echo '      <button class="btn-add-to-cart add-to-cart">Ajouter</button>';
-                  echo '    </div>';
-                  echo '  </div>';
-                  echo '</div>';
-              }
-              echo '</div>';
-?>
+            {% for salad in salads %}
+                  <div class="col-lg-3 col-md-6 col-sm-12">
+                    <div class="card border-0 p-0">
+                      <div class="menu1-item">
+                        <img src="{{ asset('uploads/' ~ salad.platPhoto )}}" class="card-img-categori " alt="image">
+                      </div>
+                      <div class="card-body">
+                        <span>{{ salad.platNom }}</span><p class="card-text">{{ salad.platPrix | number_format (2,'.','.') }}</p>
+                        <button class="btn-add-to-cart add-to-cart">Ajouter</button>
+                      </div>
+                    </div>
+                  </div>
+                {% else %}
+                  <p>Aucune plat trouvé</p>
 
+                {% endfor %}
            </div>
         </div>
           <!-- start of Boissons --> 
@@ -258,76 +212,28 @@
                  </h1>
             </div>
          </div>
-         <div class="container  position-relative mb-5 ">
+         <div class="container position-relative mb-5">
           <div class="owl-carousel owl-theme carousel-two">
-              <div class="item">
-                <div class="card  border-0  p-0 " >
-                  <div class="menu1-item">
-                    <img src="../src/eee.jpeg" class="card-img-categori " alt="image">
+              {% for boisson in boissons %}
+                  <div class="item">
+                      <div class="card border-0 p-0">
+                          <div class="menu1-item">
+                              <img src="{{ asset('uploads/' ~ boisson.platPhoto )}}" class="card-img-categori" alt="image">
+                          </div>
+                          <div class="card-body">
+                              <span>{{ boisson.platNom }}</span><p class="card-text">{{ boisson.platPrix | number_format(2, '.', '.') }}</p>
+                              <form method="post">
+                                  <button class="btn-add-to-cart add-to-cart" type="submit">Ajouter</button>
+                              </form>
+                          </div>
+                      </div>
                   </div>
-                  <div class="card-body" >
-                      <p class="card-text">prix</p> 
-                      <form method="post">
-                      <button class="btn-add-to-cart add-to-cart" type="submit">Ajouter</button>
-                      </form>
-                  </div>
-              </div>
-              </div>
-              <div class="item">
-                <div class="card  border-0  p-0 " >
-                  <div class="menu1-item">
-                    <img src="../src/eeeee.jpeg" class="card-img-categori " alt="image">
-                  </div>
-                  <div class="card-body" >
-                      <p class="card-text">prix</p> 
-                      <form method="post">
-                      <button class="btn-add-to-cart add-to-cart" type="submit">Ajouter</button>
-                      </form>
-                  </div>
-              </div>
-              </div>
-              <div class="item">
-                <div class="card  border-0  p-0 " >
-                  <div class="menu1-item">
-                    <img src="../src/ener.jpeg" class="card-img-categori " alt="image">
-                  </div>
-                  <div class="card-body" >
-                      <p class="card-text">prix</p> 
-                      <form method="post">
-                      <button class="btn-add-to-cart add-to-cart" type="submit">Ajouter</button>
-                      </form>
-                  </div>
-              </div>
-              </div>
-              <div class="item">
-                <div class="card  border-0  p-0 " >
-                  <div class="menu1-item">
-                    <img src="../src/jusorange.jpeg" class="card-img-categori " alt="image">
-                  </div>
-                  <div class="card-body">
-                      <p class="card-text">prix</p>
-                      <form method="post">
-                      <button class="btn-add-to-cart add-to-cart" type="submit">Ajouter</button>
-                      </form> 
-                  </div>
-              </div>
-              </div>
-              <div class="item">
-                <div class="card  border-0  p-0 " >
-                  <div class="menu1-item">
-                    <img src="../src/eau.jpg" class="card-img-categori " alt="image">
-                  </div>
-                  <div class="card-body" >
-                      <p class="card-text">prix</p> 
-                      <form method="post">
-                      <button class="btn-add-to-cart add-to-cart" type="submit">Ajouter</button>
-                      </form>
-                  </div>
-              </div>
-              </div>
-              <!--  more items -->
+              {% else %}
+                  <p>Aucune boisson trouvée</p>
+              {% endfor %}
           </div>
       </div>
+      
      </div>   
        
 

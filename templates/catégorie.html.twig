@@ -50,33 +50,36 @@
               </ul>
           </div>
           <div class="tab-content">
-          <div class="container mb-5 mt-5 pb-3 tab-pane fade show active " id="taco">
-          <div class="row ">
-          <div class="col-lg-3 col-md-6 col-sm-12">
-            <div class="card  border-0 p-0" >
-              <div class="menu1-item">
-              <img src="../src/delicious-traditional-tacos-arrangement.jpg" class="card-img-categori " alt="image">
-            </div>
-              <div class="card-body" >
-                <h4>Taco Mexicain</h4>  
-                <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique harum nostrum tempora eos non velit illum voluptatem officia, sit cupiditate cumque mollitia fugit quis praesentium repudiandae consectetur soluta laborum! Autem?</p>
-              </div>
-          </div>
-          </div>
-         <div class="col-lg-3 col-md-6 col-sm-12">
-          <div class="card border-0 p-0" >
-            <div class="menu1-item">
-              <img src="../src/traditional-mexican-tacos-with-meat-vegetables-isolated-white-background.jpg" class="card-img-categori " alt="image">
-            </div>
-            <div class="card-body" >
-              <h4>Taco Traditional</h4>  
-              <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique harum nostrum tempora eos non velit illum voluptatem officia, sit cupiditate cumque mollitia fugit quis praesentium repudiandae consectetur soluta laborum! Autem?</p>
-  
+            <div class="container mt-5 tab-pane fade show active" id="taco">
+                <div class="row">
+                    {% for categorie in categories %}
+                        <div class="col-12">
+                            <h3 class="text-primary">{{ categorie.cat_nom }}</h3>  
+                            <p class="text-muted">{{ categorie.cat_description }}</p>
+                        </div>
+        
+                        {% for plat in categorie.plats %}
+                            <div class="col-lg-3 col-md-6 col-sm-12">
+                                <div class="card border-0 p-0">
+                                    <div class="menu1-item">
+                                        <img src="{{ asset('uploads/' ~ plat.platPhoto) }}" class="card-img-categori" alt="{{ plat.platNom }}">
+                                    </div>
+                                    <div class="card-body">
+                                        <h5>{{ plat.platNom }}</h5>  
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p>Aucun plat trouvé pour cette catégorie.</p>
+                        {% endfor %}
+        
+                    {% else %}
+                        <p>Aucune catégorie trouvée.</p>
+                    {% endfor %}
+                </div>
             </div>
         </div>
-        </div>
-        </div>
-       </div>
+        
           <!-- burger tab -->
           <div class="container mb-5 mt-5 pb-3 tab-pane fade" id="burger">
           <div class="row ">

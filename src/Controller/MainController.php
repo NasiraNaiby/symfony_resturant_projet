@@ -8,7 +8,18 @@ use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Plats;
 use App\Entity\Categories;
+use App\Service\PlatsAndCategoryHelper;
+
 final class MainController extends AbstractController{
+
+    private PlatsAndCategoryHelper $helper;
+
+    public function __construct(PlatsAndCategoryHelper $helper)
+    {
+        $this->helper = $helper;
+    }
+
+
     #[Route('/main', name: 'main')]
     public function index(): Response
     {
@@ -22,17 +33,23 @@ final class MainController extends AbstractController{
     }
 
     #[Route('/catégorie', name: 'main_catégorie')]
-    public function catégorie(EntityManagerInterface $entityManager): Response
+    public function catégorie(): Response
     {
-        $categories = $entityManager->getRepository(Categories::class) // ✅ Fetch categories
-            ->createQueryBuilder('c')
-            ->leftJoin('c.plats', 'p') // ✅ Join plats table
-            ->addSelect('p') // ✅ Fetch plats data
-            ->getQuery()
-            ->getResult();
-    
+        // List of category names
+        $categoryNames = ['tacos', 'Burgers', 'pizza', 'Petit-déjeuner', 'SeaFoods', 'Salads', 'Boissons'];
+
+        // Initialize an empty array to store results
+        $results = [];
+
+        // Fetch data for each category dynamically
+        foreach ($categoryNames as $categoryName) {
+            $results[$categoryName] = $this->helper->getCategoryByPlats($categoryName);
+            dump($categoryName, $results[$categoryName]); // Debugging output
+        }
+        
+        // Pass the results to the template
         return $this->render('catégorie.html.twig', [
-            'categories' => $categories,  // ✅ Now $categories is correctly passed
+            'results' => $results
         ]);
     }
     
@@ -47,69 +64,22 @@ final class MainController extends AbstractController{
     #[Route('/plats', name: 'main_plats')]
     public function plats(EntityManagerInterface $entityManager): Response
     {
-        $plats = $entityManager->getRepository(Plats::class)
-        ->createQueryBuilder('p')
-        ->join('p.categorie', 'c')  // Join the 'categorie' property from Plats
-        ->where('c.cat_nom = :category')  // Use 'cat_nom' as defined in your entity => only accepts single value here ('c.cat_nom = :category')
-        ->setParameter('category', 'tacos')
-        ->getQuery()
-        ->getResult();
-
-
-        $fastfoods = $entityManager->getRepository(Plats::class)
-        ->createQueryBuilder('p')
-        ->join('p.categorie', 'c')  // Join with Categories
-        ->where('c.cat_nom IN (:categories)')  // Use IN clause for multiple values('c.cat_nom IN (:categories)') 
-        ->setParameter('categories', ['Burgers', 'pizza'])  // Pass an array of values
-        ->getQuery()
-        ->getResult();
-
-        $seafoods = $entityManager->getRepository(Plats::class)
-        ->createQueryBuilder('p')
-        ->join('p.categorie', 'c')  // Join with Categories
-        ->where('c.cat_nom = :category') 
-        ->setParameter('category', 'Sea foods')  // Pass an array of values
-        ->getQuery()
-        ->getResult();
-
-        $pds = $entityManager->getRepository(Plats::class)
-        ->createQueryBuilder('p')
-        ->join('p.categorie', 'c')  // Join with Categories
-        ->where('c.cat_nom = :category')  
-        ->setParameter('category', 'Petit-déjeuner')  // Pass an array of values
-        ->getQuery()
-        ->getResult();
-
-        $salads = $entityManager->getRepository(Plats::class)
-        ->createQueryBuilder('p')
-        ->join('p.categorie', 'c')
-        ->where('c.cat_nom = :category')
-        ->setParameter('category', 'Salads')
-        ->getQuery()
-        ->getResult();
-
-        $boissons = $entityManager->getRepository(Plats::class)
-        ->createQueryBuilder('p')
-        ->join('p.categorie', 'c')
-        ->where('c.cat_nom = :category')
-        ->setParameter('category', 'Boissons')
-        ->getQuery()
-        ->getResult();
-
+        // Create a map of categories to their data
+        $categories = [
+            'Tacos' => $this->helper->getCategoryByPlats('tacos'),
+            'Fastfood' => $this->helper->getPlatsByCategory(['Burgers', 'pizza'], true),
+            'Seafoods' => $this->helper->getCategoryByPlats('SeaFoods'),
+            'Petit-déjeuner' => $this->helper->getCategoryByPlats('Petit-déjeuner'),
+            'Salads' => $this->helper->getCategoryByPlats('Salads'),
+            'Boissons' => $this->helper->getCategoryByPlats('Boissons'),
+        ];
     
-    
-    // Render the template and pass the plats data to it
-    return $this->render('plats.html.twig', [
-        'plats' => $plats,  // Pass plats to Twig
-        'fastfoods' => $fastfoods,
-        'seafoods' =>$seafoods,
-        'pds'=>$pds,
-        'salads'=>$salads,
-        'boissons'=>$boissons,
-    ]);
-    
-    
+        // Pass the consolidated categories array to Twig
+        return $this->render('plats.html.twig', [
+            'categories' => $categories,
+        ]);
     }
+    
 
     #[Route('/clients', name: 'clients_index')]
     #[IsGranted('ROLE_USER')] // Allow only users with ROLE_USER

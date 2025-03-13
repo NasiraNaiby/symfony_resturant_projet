@@ -60,180 +60,65 @@
             <!-- start of (tacos) -->
      <div class="bg pb-3">
 
-      <div class="container p-1" id="taco">
-        <div class="row mt-5">
-             <h1 class=" fw-bold">
-                Taco <span class="text-warning">(Mexicain)</span> 
-             </h1>
-        </div>
-     </div>
-      <div class="container mb-5 pb-3 ">
-            <div class="row">
-                {% for plat in plats %}
-                    <div class="col-lg-3 col-md-6 col-sm-12">
-                        <div class="card border-0 p-0">
-                            <div class="menu1-item">
-                                <img src="{{ asset('uploads/' ~ plat.platPhoto) }}" class="card-img-categori" alt="image">
-                            </div>
-                            <div class="card-body">
-                                <span>{{ plat.platNom }}</span> <!-- Updated to platNom -->
-                                <p class="card-text">{{ plat.platPrix | number_format(2, '.', ',') }}</p>
-                                <button class="btn-add-to-cart add-to-cart">Ajouter</button>
-                            </div>
-                        </div>
-                    </div>
-                {% else %}
-                    <p>Aucun plat trouvé.</p>
-                {% endfor %}
-            </div>
-    </div>
-    
-          
-              <!-- start of platB -->
-               <div class="container  p-1" id="fastfood">
-                <div class="row">
-                     <h1 class=" fw-bold">
-                      Fast<span class="text-warning">Food</span> 
-                     </h1>
-                </div>
-            </div>
 
-      
-            <div class="container position-relative mb-5 pb-3">
-              <div class="owl-carousel owl-theme carousel-one">
-                    {% for fastfood in fastfoods %}
-                        <div class="item">
-                          <div class="card border-0 p-0">
-                            <div class="menu1-item">
-                              <img src="{{ asset('uploads/' ~ fastfood.platPhoto) }}" class="card-img-categori" alt="image">
-                            </div>
-                            <div class="card-body">
-                              <span>{{ fastfood.platNom }} </span><p class="card-text">{{ fastfood.platPrix | number_format(2, '.', ',') }}</p>
-                              <button class="btn-add-to-cart add-to-cart">Ajouter</button>
-                            </div>
-                          </div>
-                       </div>
-                    {% else %}
-                    <p>Aucun plat trouvé.</p>
-                {% endfor %}
-          </div>
-      </div>
-           
-          <!-- start of platC -->
-          <div class="container  p-1" id="seafood">
-            <div class="row">
-                 <h1 class=" fw-bold">
-                  Sea <span class="text-warning">Food</span> 
-                 </h1>
-            </div>
+     {% for category, plats in categories %}
+     <div class="container p-3 mt-5" id="{{ category|lower|replace({' ': '-'}) }}">
+         <div class="row">
+             <h1 class="fw-bold">
+                 {{ category|capitalize }}
+                 {% if category == 'Boissons' %}
+                     <i class="bi bi-cup-straw" style="font-size: 3rem; color: #ffc107;"></i>
+                 {% endif %}
+             </h1>
          </div>
-         <div class="container position-relative mb-5 pb-3  ">
-          <div class="owl-carousel owl-theme carousel-one">
-             {% for seafood in seafoods %}
+     </div>
+     
+     {% if category in ['Fastfood', 'Seafoods', 'Petit-déjeuner', 'Boissons'] %}
+         <div class="container position-relative mb-5 pb-3">
+             <div class="owl-carousel owl-theme carousel-one">
+                 {% for plat in plats %}
                      <div class="item">
-                       <div class="card border-0 p-0">
-                         <div class="menu1-item">
-                           <img src="{{ asset('uploads/' ~ seafood.platPhoto) }}" class="card-img-categori" alt="image">
+                         <div class="card border-0 p-0">
+                             <div class="menu1-item">
+                                 <img src="{{ asset('uploads/' ~ plat.platPhoto) }}" class="card-img-categori" alt="image">
+                             </div>
+                             <div class="card-body">
+                                 <span>{{ plat.platNom }}</span>
+                                 <p class="card-text">{{ plat.platPrix | number_format(2, '.', ',') }}</p>
+                                 <button class="btn-add-to-cart add-to-cart">Ajouter</button>
+                             </div>
                          </div>
-                         <div class="card-body">
-                           <span>{{ seafood.platNom }}</span><p class="card-text">{{ seafood.platPrix | number_format(2, '.', ',') }}</p>
-                           <button class="btn-add-to-cart add-to-cart">Ajouter</button>
-                         </div>
-                       </div>
                      </div>
-                     {% else %}
-                      <p>Aucune plat trouvé</p>
-                  {% endfor %}
-          </div>
-      </div>
-      
-       <!-- start of platC -->
-       <div class="container  p-1" id="breakfast">
-        <div class="row">
-             <h1 class=" fw-bold">
-              Petit-<span class="text-warning">déjeuner</span> 
-             </h1>
-        </div>
-     </div>
-     <div class="container position-relative mb-5 pb-3  ">
-      <div class="owl-carousel owl-theme carousel-one">
-          {% for pd in pds %}
-                    <div class="item">
-                      <div class="card border-0 p-0">
-                        <div class="menu1-item">
-                          <img src="{{ asset('uploads/' ~ pd.platPhoto )}}" class="card-img-categori" alt="image">
-                        </div>
-                        <div class="card-body">
-                          <span>{{ pd.platNom }}</span><p class="card-text">{{ pd.platPrix | number_format(2, '.', '.')}}</p>
-                          <button class="btn-add-to-cart add-to-cart">Ajouter</button>
-                        </div>
-                      </div>
-                    </div>
-                {% else %}
-                <p>Aucune plat trouvé</p>
-                {% endfor %}
-
-      </div>
-  </div>
-         <!-- start of salads -->
-            <div class="container p-1" id="salade">
-              <div class="row">
-                  <h1 class=" fw-bold">
-                      Nos <span class="text-warning">Salades</span> 
-                  </h1>
-              </div>
-          </div> 
-
-          <div class="container mb-5 pb-3 ">
-            <div class="row ">
-            {% for salad in salads %}
-                  <div class="col-lg-3 col-md-6 col-sm-12">
-                    <div class="card border-0 p-0">
-                      <div class="menu1-item">
-                        <img src="{{ asset('uploads/' ~ salad.platPhoto )}}" class="card-img-categori " alt="image">
-                      </div>
-                      <div class="card-body">
-                        <span>{{ salad.platNom }}</span><p class="card-text">{{ salad.platPrix | number_format (2,'.','.') }}</p>
-                        <button class="btn-add-to-cart add-to-cart">Ajouter</button>
-                      </div>
-                    </div>
-                  </div>
-                {% else %}
-                  <p>Aucune plat trouvé</p>
-
-                {% endfor %}
-           </div>
-        </div>
-          <!-- start of Boissons --> 
-          <div class="container p-1" >
-            <div class="row">
-                 <h1 class=" fw-bold " id="boissons">
-                    Boissons<i class="bi bi-cup-straw" style="font-size: 3rem; color: #ffc107;"></i>  
-                 </h1>
-            </div>
+                 {% else %}
+                     <p>Aucun plat trouvé.</p>
+                 {% endfor %}
+             </div>
          </div>
-         <div class="container position-relative mb-5">
-          <div class="owl-carousel owl-theme carousel-two">
-              {% for boisson in boissons %}
-                  <div class="item">
-                      <div class="card border-0 p-0">
-                          <div class="menu1-item">
-                              <img src="{{ asset('uploads/' ~ boisson.platPhoto )}}" class="card-img-categori" alt="image">
-                          </div>
-                          <div class="card-body">
-                              <span>{{ boisson.platNom }}</span><p class="card-text">{{ boisson.platPrix | number_format(2, '.', '.') }}</p>
-                              <form method="post">
-                                  <button class="btn-add-to-cart add-to-cart" type="submit">Ajouter</button>
-                              </form>
-                          </div>
-                      </div>
-                  </div>
-              {% else %}
-                  <p>Aucune boisson trouvée</p>
-              {% endfor %}
-          </div>
-      </div>
-      
+     {% else %}
+         <div class="container mb-5 pb-3">
+             <div class="row">
+                 {% for plat in plats %}
+                     <div class="col-lg-3 col-md-6 col-sm-12">
+                         <div class="card border-0 p-0">
+                             <div class="menu1-item">
+                                 <img src="{{ asset('uploads/' ~ plat.platPhoto) }}" class="card-img-categori" alt="image">
+                             </div>
+                             <div class="card-body">
+                                 <span>{{ plat.platNom }}</span>
+                                 <p class="card-text">{{ plat.platPrix | number_format(2, '.', ',') }}</p>
+                                 <button class="btn-add-to-cart add-to-cart">Ajouter</button>
+                             </div>
+                         </div>
+                     </div>
+                 {% else %}
+                     <p>Aucun plat trouvé.</p>
+                 {% endfor %}
+             </div>
+         </div>
+     {% endif %}
+ {% endfor %}
+ 
+ 
      </div>   
        
 

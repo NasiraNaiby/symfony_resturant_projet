@@ -27,9 +27,22 @@ final class MainController extends AbstractController{
     }
 
     #[Route('/', name: 'main_accueil')]
-    public function accueil(): Response
+    public function accueil(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('accueil.html.twig');
+        $plats = $entityManager->getRepository(Plats::class)
+        ->createQueryBuilder('p')
+        ->leftJoin('p.categorie', 'c') // Join with the Categories entity
+        ->where('c.cat_nom != :category')  // Filter out "Boissons"
+        ->setParameter('category', 'Boissons')
+        ->select('p.plat_photo')
+        ->getQuery()
+        ->getResult();
+
+    return $this->render('accueil.html.twig', [
+        'plats' => $plats,
+    ]);
+
+        
     }
 
     #[Route('/catégorie', name: 'main_catégorie')]

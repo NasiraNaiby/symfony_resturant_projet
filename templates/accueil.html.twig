@@ -197,28 +197,20 @@
 
    <hr>
    <div class="container-fluid position-relative mb-5 pb-3">
-  <div class="owl-carousel owl-theme carousel-three">
-      <?php
-      // SQL query to fetch platPhoto from plats table
-      $sql = "SELECT platPhoto FROM plats";
-      $stmt = $pdo->query($sql);
-
-      if ($stmt) {
-          // here it loops all the images from the plats table
-          while ($row = $stmt->fetch()) {
-              echo '<div class="item">';
-              echo '  <div class="card menu1-item border-0 p-0">';
-              echo '    <img src="images/uploads/' . $row["platPhoto"] . '" class="accueilslideshow" style="height: 200px;" class="card-img-top" alt="image">';
-              echo '    <div class="card-body"></div>';
-              echo '  </div>';
-              echo '</div>';
-          }
-      } else {
-          echo "Error: " . $pdo->errorInfo()[2];
-      }
-      ?>
-  </div>
+    <div class="owl-carousel owl-theme carousel-three">
+        {% for plat in plats %}
+            <div class="item">
+                <div class="card menu1-item border-0 p-0">
+                    <img src="{{ asset('uploads/' ~ plat.plat_photo) }}" class="accueilslideshow" style="height: 200px;" class="card-img-top" alt="image">
+                    <div class="card-body"></div>
+                </div>
+            </div>
+        {% else %}
+            <p>Aucune image trouvée.</p>
+        {% endfor %}
+    </div>
 </div>
+
 
 
         

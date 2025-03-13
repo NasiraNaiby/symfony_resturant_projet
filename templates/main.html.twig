@@ -40,27 +40,39 @@
                 </a>
                 <span id="cart-count" class="badge bg-danger position-absolute top-0 start-50 translate-middle me-3 mt-2" style="left: 30% !important;">0</span>
                 
-                <!-- <?php if ($display_name): ?> -->
+                {% if app.user %}
                     <div class="dropdown ms-4">
                         <a href="#" class="dropdown-toggle" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: #ffffff;">
-                            <!-- <?php echo htmlspecialchars($display_name); ?> -->
+                           
+                            {{ app.user.userNom }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li class="d-flex justify-content-center py-2 ">
-                                <img src="../src/userimage/district.png" alt="User Image" class="img-thumbnail rounded-circle " style="width: 60px; height: 50px;">
-                            </li>
-                           
-                            <li><a class="dropdown-item text-center"> <!-- <?php echo htmlspecialchars($display_name); ?> --></a></li>
-                            <!-- <li><a  href="../clients/clients.php"    class="dropdown-item text-center">Profile</a></li> -->
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ path('app_logout')}}">Logout</a></li>
+                            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                                <li class="d-flex justify-content-center py-2">
+                                    <img src="{{ asset('userimage/district.png') }}" alt="User Image" class="img-thumbnail rounded-circle" style="width: 60px; height: 50px;">
+                                </li>
+                                <li><a class="dropdown-item text-center">{{ app.user.userNom }}</a></li>
+                                <li><a href="{{ path('clients_index') }}" class="dropdown-item text-center">Profile</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-center" href="{{ path('app_logout') }}">Logout</a></li>
+                            {% endif %}
                         </ul>
                     </div>
-                <!-- <?php else: ?> -->
-                    <a href="{{ path('app_login')}}" class="ms-4" style="text-decoration: none;">
-                        <i class="bi bi-person-circle" style="font-size: 20px; color: #ffffff;"></i>
-                    </a>
-                <!-- <?php endif; ?> -->
+                {% else %}
+                    <div class="dropdown ms-4">
+                        <a href="#" class="dropdown-toggle" role="button" id="guestDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #ffffff;">
+                            <i class="bi bi-person-circle" style="font-size: 20px; color: #ffffff;"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="guestDropdown">
+                            <li><a class="dropdown-item text-center" href="{{ path('app_login') }}">Login</a></li>
+                            <li><a class="dropdown-item text-center" href="#">Register</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                        </ul>
+                    </div>
+                {% endif %}
+
+
+            
             </div>
         </div>
     </div>
@@ -68,7 +80,7 @@
     <nav class="container navbar navbar-expand-lg navbar-light rounded-5 sticky-top" id="CustomNavbar">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
-                <img src="../src/logo_transparent.png" id="logo" alt="image1" style="width: 70px;">
+                <img src="{{ asset('uploads/logo_transparent.png') }}" id="logo" alt="image1" style="width: 70px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

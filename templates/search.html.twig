@@ -1,0 +1,14 @@
+
+
+<h1>Search Results</h1>
+{% if plats is not empty %}
+    <ul>
+        {% for result in plats %}
+            <li><img src="{{ asset('uploads/' ~ result.platPhoto) }}" class="card-img-categori" alt="image" width="200px" height="200px"></li>
+            <li>{{ result.platNom }}</li> 
+            <li>{{ result.platPrix }}</li> 
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No plats found for "{{ app.request.query.get('user_value') }}".</p>
+{% endif %}

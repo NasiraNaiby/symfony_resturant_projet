@@ -16,6 +16,16 @@ class PlatsRepository extends ServiceEntityRepository
         parent::__construct($registry, Plats::class);
     }
 
+
+    // public function findBySearchQuery(string $query)
+    // {
+    //     return $this->createQueryBuilder('p')
+    //         ->where('p.plat_nom LIKE :keyword OR p.plat_description LIKE :keyword')
+    //         ->setParameter('keyword', '%' . $keyword . '%')
+    //         ->getQuery()
+    //         ->getResult();
+    // }
+
 //    /**
 //     * @return Plats[] Returns an array of Plats objects
 //     */

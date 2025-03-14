@@ -18,36 +18,46 @@
                 <img src="{{ asset('assets/images/bgn.jpg') }}" class="d-block w-100 c-image" alt="...">
                 <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                     <h1 class="display-4">Bienvenue au District Restaurant</h1>
-                    <form action="php/foodlist.php">
-                        <div class="input-group justify-content-center search-input-group mt-3 ">
-                            <input type="text" class="form-control input-resize rounded-left-top-bottom" placeholder="Recherché" name='user_value' id="search" value="<?php echo isset($_POST['query']) ? htmlspecialchars($_POST['query']) : ''; ?>">
-                            <button type="submit" class="btn btn-secondary btn-sm rounded-right-top-bottom"><i class="bi bi-search"></i></button>
-                        </div>
-                    </form>
+                    <form method="get" action="{{ path('search') }}"> 
+                      <div class="input-group justify-content-center search-input-group mt-3">
+                          <input type="text" class="form-control input-resize" 
+                                 placeholder="Recherché" name="user_value" id="search">
+                          <button type="submit" class="btn btn-secondary btn-sm rounded-right-top-bottom">
+                              <i class="bi bi-search"></i>
+                          </button>
+                      </div>
+                  </form>
+                  
                 </div>
             </div>
             <div class="carousel-item header-c-items">
                 <img src="{{ asset('assets/images/bgnn.jpg') }}" class="d-block w-100 c-image" alt="...">
                 <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                     <h1 class="display-4">Bienvenue au District Restaurant</h1>
-                    <form action="foodlist.php">
-                        <div class="input-group justify-content-center search-input-group mt-3">
-                            <input type="text" class="form-control input-resize" placeholder="Recherché" name='user_value' id="search" value="<?php echo isset($_POST['query']) ? htmlspecialchars($_POST['query']) : ''; ?>">
-                            <button type="submit" class="btn btn-secondary btn-sm rounded-right-top-bottom"><i class="bi bi-search"></i></button>
-                        </div>
-                    </form>
+                    <form method="get" action="{{ path('search') }}"> 
+                      <div class="input-group justify-content-center search-input-group mt-3">
+                          <input type="text" class="form-control input-resize" 
+                                 placeholder="Recherché" name="user_value" id="search">
+                          <button type="submit" class="btn btn-secondary btn-sm rounded-right-top-bottom">
+                              <i class="bi bi-search"></i>
+                          </button>
+                      </div>
+                  </form>
                 </div>
             </div>
             <div class="carousel-item header-c-items">
                 <img src="{{ asset('assets/images/bgnnn.jpg') }}" class="d-block w-100 c-image" alt="...">
                 <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                     <h1 class="display-4">Bienvenue au District Restaurant</h1>
-                    <form action="foodlist.php">
-                        <div class="input-group search-input-group justify-content-center  mt-3">
-                            <input type="text" class="form-control input-resize" placeholder="Recherché" name='user_value' id="search" value="<?php echo isset($_POST['query']) ? htmlspecialchars($_POST['query']) : ''; ?>">
-                            <button type="submit" class="btn btn-secondary btn-sm rounded-right-top-bottom"><i class="bi bi-search"></i></button>
-                        </div>
-                    </form>
+                    <form method="get" action="{{ path('search') }}"> 
+                      <div class="input-group justify-content-center search-input-group mt-3">
+                          <input type="text" class="form-control input-resize" 
+                                 placeholder="Recherché" name="user_value" id="search">
+                          <button type="submit" class="btn btn-secondary btn-sm rounded-right-top-bottom">
+                              <i class="bi bi-search"></i>
+                          </button>
+                      </div>
+                  </form>
                 </div>
             </div>
         </div>
@@ -64,61 +74,24 @@
       
 <div class="bg pb-3 ">
   <!-- categorie cards starts start -->
-          <div class="container p-4 ">
-           <div class="row mt-5">
-            <!-- card 1 -->
-             <div class="col-lg-4 col-md-8 col-sm-12">
-              <div class="card card1 tacocard"  style="background-image: url('images/delicious-traditional-tacos-arrangement.jpg');">
-                <div class="card-body" >
-                  <a href="plats.html#taco" style="color: white;"><h5 class="card-title card-body-title" >Taco (Mexicain)</h5></a>
-                </div>
-              </div>
-             </div>
-            
-            <!-- card 2 -->
-             
-            <div class="col-lg-4 col-md-8 col-sm-12">
-              <div class="card card1 tacocard"  style="background-image: url('images/f.jpg');">
+  <div class="container p-4">
+    <div class="row mt-5">
+        {% for cat in cats %}
+        <div class="col-lg-4 col-md-8 col-sm-12">
+            <div class="card card1 tacocard" style="background-image: url('{{ asset(uploads/ ~ cat.cat_image) }}');">
+              <!-- <div class="card card1 tacocard" style="background-image: url('{{ asset("uploads/" ~ cat.cat_image) }}');"> -->
+
                 <div class="card-body">
-                  <a href="plats.html#fastfood" style="color: white;"><h5 class="card-title card-body-title" >Fastfood</h5></a>
+                    <a href="plats.html#" style="color: white;">
+                        <h5 class="card-title card-body-title">{{ cat.cat_nom }}</h5>
+                    </a>
                 </div>
-              </div>
-             </div>
-            
-            <!-- card 3 -->
-            <div class="col-lg-4 col-md-8 col-sm-12">
-              <div class="card card1 tacocard"  style="background-image: url('images/sea2.jpg');">
-                <div class="card-body">
-                  <a href="plats.html#seafood" style="color: white;"><h5 class="card-title card-body-title" >Sea Food</h5></a>
-                </div>
-              </div>
-             </div>
-            <!-- card 4 -->
-            <div class="col-lg-4 col-md-8 col-sm-12">
-              <div class="card card1 tacocard"  style="background-image: url('images/breakfast4.jpg');">
-                <div class="card-body">
-                  <a href="plats.html#breakfast" style="color: white;"><h5 class="card-title card-body-title" >Petit-déjeuner</h5></a>
-                </div>
-              </div>
-             </div>
-               <!-- card 5 -->
-            <div class="col-lg-4 col-md-8 col-sm-12">
-              <div class="card card1 tacocard"  style="background-image: url('images/salad1.jpg');">
-                <div class="card-body">
-                  <a href="plats.html#salade" style="color: white;"><h5 class="card-title card-body-title" >Salades</h5></a>
-                </div>
-              </div>
-             </div>
-              <!-- card 5 -->
-            <div class="col-lg-4 col-md-8 col-sm-12">
-              <div class="card card1 tacocard"  style="background-image: url('images/boisson.jpg');">
-                <div class="card-body">
-                  <a href="plats.html#boissons" style="color: white;"><h5 class="card-title card-body-title" >Boissons</h5></a>
-                </div>
-              </div>
-             </div>
-           </div>
-          </div>      
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
 <!-- adding categorie cards -->
      <div class="container">
       <div class="row  mt-3  align-items-center" >
@@ -276,7 +249,6 @@
     <div class="container my-4">
       <div class="row ">
         <div class="col-lg-12 col-md-6 contact-form-style py-3">
-        <?php //include 'contactform.php'?>
         <form id="contactForm" action="../php/phpscript.php" method="post">
             <!-- Name input -->
             <div class="mb-3 d-flex">

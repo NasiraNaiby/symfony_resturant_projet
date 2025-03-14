@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CategoriesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CategoriesRepository::class)]
@@ -26,6 +27,9 @@ class Categories
      */
     #[ORM\OneToMany(targetEntity: Plats::class, mappedBy: 'categories', orphanRemoval: true)]
     private Collection $plats;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $cat_image = null;
 
     public function __construct()
     {
@@ -93,5 +97,17 @@ class Categories
     public function __toString(): string
     {
         return $this->cat_nom; // This ensures that the category name is displayed as a string
+    }
+
+    public function getCatImage(): ?string
+    {
+        return $this->cat_image;
+    }
+
+    public function setCatImage(?string $cat_image): static
+    {
+        $this->cat_image = $cat_image;
+
+        return $this;
     }
 }

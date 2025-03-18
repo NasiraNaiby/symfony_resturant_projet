@@ -78,9 +78,10 @@
     <div class="row mt-5">
         {% for cat in cats %}
         <div class="col-lg-4 col-md-8 col-sm-12">
-            <div class="card card1 tacocard" style="background-image: url('{{ asset(uploads/ ~ cat.cat_image) }}');">
-              <!-- <div class="card card1 tacocard" style="background-image: url('{{ asset("uploads/" ~ cat.cat_image) }}');"> -->
-
+            <div class="tacocard" style="background-image: url('{{ filepath ~ cat.cat_image }}') !important;"></div>
+            <!-- <div class="tacocard" style="background-image: url('{{ filepath ~  cat.cat_image }}');"> </div> -->
+            <!-- <div class="tacocard" style="background-image: url('{{ 'uploads/' ~ cat.cat_image}}')"> </div> -->
+             <div class="card card1 tacocard"  >
                 <div class="card-body">
                     <a href="plats.html#" style="color: white;">
                         <h5 class="card-title card-body-title">{{ cat.cat_nom }}</h5>
@@ -96,60 +97,37 @@
      <div class="container">
       <div class="row  mt-3  align-items-center" >
         <div class="col">
-          <h1 class="fw-bold display-6 ">Categories description</h1>
+          <h1 class="fw-bold display-6 text-center">Commentaires des Clients</h1>
         </div>
       </div>
     </div>
 
     <hr>
   <div class="container mb-5 pb-3 ">
-    <div class="row ">
-     <!-- card 1 -->
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="card  border-0 p-0" >
-         <div class=" menu1-item">
-            
-          <img src="{{ asset('assets/images/delicious-traditional-tacos-arrangement.jpg') }}"  class="card-img-top " alt="image">
-         </div>
-          <div class="card-body" >
-            <h4>Food name</h4>  
-            <p class="card-text">Lorem ipsuit illum voluptatem officia, sit cupiditate cumque mollitia fugit quis praesentium repudiandae consectetur soluta laborum! Autem?</p>
-          </div>
-      </div>
-      </div>
-     
-     <!-- card 2 -->
 
-     <div class="col-lg-3 col-md-6 col-sm-12">
-      <div class="card  border-0 p-0" >
-        <div class=" menu1-item">
-            
-          <img src="{{ asset('assets/images/f.jpg') }}"  class="card-img-top " alt="image">
-         </div>
-        <div class="card-body" >
-          <h4>Food name</h4>  
-          <p class="card-text">Lorem ipsum dolor sit amet consecoluptatem off repudiandae consectetur soluta laborum! Autem?</p>
 
-        </div>
-    </div>
-    </div>
 
-         <!-- card 3 -->
-         <div class="col-lg-3 col-md-6 col-sm-12">
-          <div class="card border-0 p-0" >
-            <div class=" menu1-item">
-              <img src="{{ asset('assets/images/breakfast3.jpg') }}"  class="card-img-top " alt="image">
-             </div>
-            <div class="card-body" >
-              <h4>Food name</h4>  
-              <p class="card-text">Lorem ipsum dolor sit amet consec ta laborum! Autem?</p>
+        
+    <div class="row gy-4">
+        {% for feedback in feedbacks %}
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center p-4 rounded-3 feedback-card">
+                <img src="{{ asset('uploads/' ~ feedback.userPhoto) }}" class="rounded-circle mb-3 border border-3 border-primary shadow" alt="Photo of {{ feedback.userNom }}" width="120" height="120">
+                <h5 class="fw-bold mb-1">{{ feedback.userNom }}</h5>
+                <blockquote class="blockquote  text-justify ">
+                    "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, error amet numquam iure provident voluptate esse quasi,
+                    veritatis totam voluptas nostrum quisquam eum porro a pariatur veniam."
+                </blockquote>
             </div>
         </div>
-        </div>
-   
+        {% endfor %}
     </div>
-   </div>
+    
+        
+        
 
+
+</div>
 <div class="parallax">
   <div class="container d-flex justify-content-center align-items-center"> 
     <div class="col-lg-6 col-sm-12"> 

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Plats;
+use App\Entity\Users;
 use App\Entity\Categories;
 use App\Service\PlatsAndCategoryHelper;
 use Doctrine\Persistence\ManagerRegistry;
@@ -60,6 +61,13 @@ public function search(EntityManagerInterface $entityManager, Request $request):
 #[Route('/', name: 'main_accueil')]
 public function accueil(EntityManagerInterface $entityManager): Response
 {
+
+    $repository = $entityManager->getRepository(Users::class);
+    $feedbacks = $repository->findAll();
+    $feedbacks = array_slice($feedbacks, 0, 3);
+
+
+    $filepath = "assets/uploads/";
     // Fetch categories excluding "Boissons"
     $cats = $entityManager->getRepository(Categories::class)
         ->createQueryBuilder('c') // Use the correct entity: Categories
@@ -82,6 +90,8 @@ public function accueil(EntityManagerInterface $entityManager): Response
     return $this->render('accueil.html.twig', [
         'plats' => $plats,
         'cats' => $cats,
+        'filepath'=>$filepath,
+        'feedbacks'=>$feedbacks,
     ]);
 }
 

@@ -17,16 +17,17 @@ class PlatsAndCategoryHelper
 
     // Method to retrieve plats by a single category name
     public function getCategoryByPlats(string $categoryName): array
-    {
-        return $this->entityManager->createQueryBuilder()
-            ->select('p.plat_photo AS platPhoto, p.plat_nom AS platNom, c.cat_description AS categoryDescription, p.plat_prix AS platPrix')
-            ->from(Plats::class, 'p') // Reference the Plats entity
-            ->innerJoin('p.categorie', 'c') // Join the Categories entity
-            ->where('c.cat_nom = :categoryName') // Filter by the category name
-            ->setParameter('categoryName', $categoryName) // Dynamically set the category name
-            ->getQuery()
-            ->getResult();
-    }
+{
+    return $this->entityManager->createQueryBuilder()
+        ->select('p.id AS id, p.plat_photo AS platPhoto, p.plat_nom AS platNom, c.cat_description AS categoryDescription, p.plat_prix AS platPrix')
+        ->from(Plats::class, 'p') // Reference the Plats entity
+        ->innerJoin('p.categorie', 'c') // Join the Categories entity
+        ->where('c.cat_nom = :categoryName') // Filter by the category name
+        ->setParameter('categoryName', $categoryName) // Dynamically set the category name
+        ->getQuery()
+        ->getResult();
+}
+
 
     // Method to retrieve plats by a single category or multiple categories
     public function getPlatsByCategory($category, bool $multiple = false): array

@@ -12,6 +12,7 @@ use App\Entity\Users;
 use App\Entity\Categories;
 use App\Service\PlatsAndCategoryHelper;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 final class MainController extends AbstractController{
 
@@ -151,5 +152,8 @@ public function accueil(EntityManagerInterface $entityManager): Response
     {   
         return $this->render('clients/index.html.twig');
     }
+
+    
+   
   
 }

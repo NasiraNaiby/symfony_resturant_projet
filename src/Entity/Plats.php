@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PlatsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,6 +34,17 @@ class Plats
     #[ORM\ManyToOne(inversedBy: 'plats')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Categories $categorie = null;
+
+    /**
+     * @var Collection<int, Detail>
+     */
+    #[ORM\OneToMany(targetEntity: Detail::class, mappedBy: 'plat')]
+    private Collection $details;
+
+    public function __construct()
+    {
+        $this->details = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -107,6 +120,36 @@ class Plats
     public function setCategorie(?Categories $categorie): static
     {
         $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Detail>
+     */
+    public function getDetails(): Collection
+    {
+        return $this->details;
+    }
+
+    public function addDetail(Detail $detail): static
+    {
+        if (!$this->details->contains($detail)) {
+            $this->details->add($detail);
+            $detail->setPlat($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDetail(Detail $detail): static
+    {
+        if ($this->details->removeElement($detail)) {
+            // set the owning side to null (unless already changed)
+            if ($detail->getPlat() === $this) {
+                $detail->setPlat(null);
+            }
+        }
 
         return $this;
     }

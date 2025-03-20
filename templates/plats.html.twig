@@ -85,8 +85,19 @@
                              <div class="card-body card-plats">
                                  <span>{{ plat.platNom }}</span>
                                  <p class="card-text">{{ plat.platPrix | number_format(2, '.', ',') }}</p>
-                                 <a href="{{ path('app_cart', { id:plat.id }) }}" class="btn btn-primary btn-add-to-cart">Ajouter</a>
-                                  
+                                 <!-- <a href="{{ path('app_cart', { id:plat.id }) }}" class="btn btn-primary btn-add-to-cart" onclick="showConfirmation(event, '{{ plat.platNom }}')">Ajouter</a>       -->
+                                 <!-- <a href="{{ path('app_cart', { id: plat.id }) }}" 
+                                 class="btn btn-primary btn-add-to-cart"
+                                 data-plat="{{ plat.platNom }}"
+                                 data-url="{{ path('cart_detail', { id: plat.id }) }}">Ajouter</a> -->
+                                 <a href="{{ path('app_cart', { id: plat.id }) }}" 
+                                 class="btn btn-primary btn-add-to-cart"
+                                 data-plat="{{ plat.platNom }}"
+                                 data-cart-url="{{ path('app_cart', { id: plat.id }) }}"> <!-- This is the correct URL to add the item -->
+                                 Ajouter
+                              </a>
+                              
+
                              </div>
                          </div>
                      </div>
@@ -107,7 +118,19 @@
                              <div class="card-body card-plats">
                                  <span>{{ plat.platNom }}</span>
                                  <p class="card-text">{{ plat.platPrix | number_format(2, '.', ',') }}</p>
-                                 <a href="{{ path('app_cart', { id:plat.id }) }}" class="btn btn-primary btn-add-to-cart">Ajouter</a>
+                                 <!-- <a href="{{ path('app_cart', { id:plat.id }) }}" class="btn btn-primary btn-add-to-cart" onclick="showConfirmation(event, '{{ plat.platNom }}')">Ajouter</a> -->
+                                 <!-- <a href="{{ path('app_cart', { id: plat.id }) }}" 
+                                 class="btn btn-primary btn-add-to-cart"
+                                 data-plat="{{ plat.platNom }}"
+                                 data-url="{{ path('main_plats', { id: plat.id }) }}">Ajouter</a> -->
+                                 <a href="{{ path('app_cart', { id: plat.id }) }}" 
+   class="btn btn-primary btn-add-to-cart"
+   data-plat="{{ plat.platNom }}"
+   data-cart-url="{{ path('app_cart', { id: plat.id }) }}"> <!-- This is the correct URL to add the item -->
+   Ajouter
+</a>
+
+
                              </div>
                          </div>
                      </div>
@@ -119,8 +142,55 @@
      {% endif %}
  {% endfor %}
  
- 
-     </div>   
-       
+ <!-- Bootstrap Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cartModalLabel">Ajouté au panier</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="cartModalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Continuer vos achats</button>
+                <a href="{{ path('cart_detail') }}" class="btn btn-primary" id="viewCartBtn">Voir le panier</a>
+            </div>
+        </div>
+    </div>
+</div>
 
+     </div>   
+     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".btn-add-to-cart").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault(); // Stop default navigation
+        
+                    let platNom = this.getAttribute("data-plat"); 
+                    let addToCartUrl = this.getAttribute("data-cart-url"); // URL to add item to cart
+        
+                    // Ask the user to confirm BEFORE adding the item
+                    if (confirm(`Voulez-vous ajouter "${platNom}" au panier ?`)) {
+                        fetch(addToCartUrl)
+                            .then(response => {
+                                if (response.ok) {
+                                   // alert(`"${platNom}" a été ajouté au panier !`);
+                                    location.reload();
+                                } else {
+                                    alert("Une erreur est survenue, veuillez réessayer.");
+                                }
+                            })
+                            .catch(error => console.error("Erreur lors de l'ajout :", error));
+                    }
+                });
+            });
+        });
+        </script>
+        
+
+        
+        
+          
 {% endblock %}

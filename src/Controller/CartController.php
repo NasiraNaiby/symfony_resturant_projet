@@ -133,4 +133,32 @@ public function deleteFromCart(SessionInterface $session, Plats $plats): Respons
     return $this->redirectToRoute('cart_detail'); // Redirect back to cart
 }
 
+
+
+#[Route('/cart/confirm', name: 'cart_confirm')]
+public function confirmOrder(SessionInterface $session): Response
+{
+    // Check if the user is logged in
+    if (!$this->getUser()) {
+
+        $this->addFlash('warning', 'Please login or register to proceed with your order.');
+        // Redirect guest users to the registration page
+        return $this->redirectToRoute('cart_detail');
+    }
+
+    // If logged in, redirect to checkout
+    return $this->redirectToRoute('cart_checkout');
+}
+
+
+
+// #[Route('/cart/count', name: 'cart_count')]
+// public function getCartCount(SessionInterface $session): JsonResponse
+// {
+//      $cart = $session->get('cart', []);
+//      $cartCount = array_sum($cart); // Calculate the total number of items in the cart
+//      return new JsonResponse(['cartCount' => $cartCount]); // Return the updated cart count
+//    // return $this->redirectToRoute('main_plats');
+// }
+
 }

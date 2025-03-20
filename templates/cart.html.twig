@@ -75,7 +75,16 @@
                         <h5>€ {{ data|reduce((carry, item) => carry + (item.plats.platPrix * item.quantite), 0) }}</h5>
                     </div>
 
-                    <button type="button" class="btn btn-dark btn-block btn-lg">Proceed to Checkout</button>
+                    {% if app.user %}
+                        <!-- If user is logged in, allow order submission -->
+                        <a href="{{ path('main_accueil') }}" class="btn btn-success">Confirm Order</a>
+                    {% else %}
+                        <!-- If guest, show the warning modal -->
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#loginWarningModal">
+                            Confirm Order
+                        </button>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
@@ -85,4 +94,25 @@
 </div>
 </div>
 </section>
+
+
+<!-- Bootstrap Modal for Warning meesage to user to proceed the command  -->
+<div class="modal fade" id="loginWarningModal" tabindex="-1" aria-labelledby="loginWarningModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginWarningModalLabel">Attention Required</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Vous devez <strong>vous connecter</strong>  pour poursuivre votre commande.
+        </div>
+        <div class="modal-footer">
+          <a href="{{ path('app_login') }}" class="btn btn-primary">Login</a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 {% endblock %}

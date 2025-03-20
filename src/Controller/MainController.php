@@ -30,11 +30,11 @@ final class MainController extends AbstractController{
         return $this->render('main.html.twig');
     }
 
-    #[Route('/checkout', name: 'cart_checkout')]
-    public function checkout(): Response
-    {
-        return $this->render('command.html.twig');
-    }
+    // #[Route('/checkout', name: 'cart_checkout')]
+    // public function checkout(): Response
+    // {
+    //     return $this->render('command.html.twig');
+    // }
 
 
     #[Route('/search', name: 'search')]

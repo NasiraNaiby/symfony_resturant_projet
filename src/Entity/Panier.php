@@ -33,6 +33,9 @@ class Panier
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Commands $commands = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $confirmed = null;
+
     public function __construct()
     {
         $this->plats = new ArrayCollection();
@@ -114,4 +117,23 @@ class Panier
 
         return $this;
     }
+
+
+    public function getUser(): ?Users
+    {
+        return $this->commands ? $this->commands->getUser() : null;
+    }
+
+    public function isConfirmed(): ?bool
+    {
+        return $this->confirmed;
+    }
+
+    public function setConfirmed(?bool $confirmed): static
+    {
+        $this->confirmed = $confirmed;
+
+        return $this;
+    }
+    
 }

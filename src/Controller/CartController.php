@@ -7,10 +7,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route; // Keep this one
 use App\Entity\Plats;
 use App\Repository\PlatsRepository;
+use App\Repository\PanierRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 
 final class CartController extends AbstractController{
@@ -147,18 +150,8 @@ public function confirmOrder(SessionInterface $session): Response
     }
 
     // If logged in, redirect to checkout
-    return $this->redirectToRoute('cart_checkout');
+    return $this->redirectToRoute('main_accueil');
 }
 
-
-
-// #[Route('/cart/count', name: 'cart_count')]
-// public function getCartCount(SessionInterface $session): JsonResponse
-// {
-//      $cart = $session->get('cart', []);
-//      $cartCount = array_sum($cart); // Calculate the total number of items in the cart
-//      return new JsonResponse(['cartCount' => $cartCount]); // Return the updated cart count
-//    // return $this->redirectToRoute('main_plats');
-// }
 
 }

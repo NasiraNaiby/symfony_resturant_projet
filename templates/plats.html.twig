@@ -161,33 +161,53 @@
     </div>
 </div>
 
-     </div>   
+     </div> 
+     
+     
+     <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-labelledby="customConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customConfirmLabel">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="customConfirmMessage">
+                    <!-- Dynamic message will go here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="confirmOkBtn">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
      <script>
         document.addEventListener("DOMContentLoaded", function () {
-            document.querySelectorAll(".btn-add-to-cart").forEach(button => {
-                button.addEventListener("click", function (event) {
-                    event.preventDefault(); // Stop default navigation
-        
-                    let platNom = this.getAttribute("data-plat"); 
-                    let addToCartUrl = this.getAttribute("data-cart-url"); // URL to add item to cart
-        
-                    // Ask the user to confirm BEFORE adding the item
-                    if (confirm(`Voulez-vous ajouter "${platNom}" au panier ?`)) {
-                        fetch(addToCartUrl)
-                            .then(response => {
-                                if (response.ok) {
-                                   // alert(`"${platNom}" a été ajouté au panier !`);
-                                    location.reload();
-                                } else {
-                                    alert("Une erreur est survenue, veuillez réessayer.");
-                                }
-                            })
-                            .catch(error => console.error("Erreur lors de l'ajout :", error));
-                    }
-                });
+        document.querySelectorAll(".btn-add-to-cart").forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault(); // Stop default navigation
+
+                let platNom = this.getAttribute("data-plat");
+
+                // Sets the modal message dynamically
+                document.getElementById("customConfirmMessage").innerText = `L'élément "${platNom}" a été ajouté avec succès à votre panier !`;
+
+                // Shows the Bootstrap modal
+                let confirmModal = new bootstrap.Modal(document.getElementById("customConfirmModal"));
+                confirmModal.show();
+
+                // Handles OK button click
+                document.getElementById("confirmOkBtn").addEventListener("click", function () {
+                    // Closes the modal
+                    confirmModal.hide();
+                    // it reload the page or perform desired action
+                    location.reload();
+                }, { once: true }); //it prevent duplicate event bindings
             });
         });
-        </script>
+        });
+
+    </script>
         
 
         

@@ -76,15 +76,18 @@
                     </div>
 
                     {% if app.user %}
-                        <!-- If user is logged in, allow order submission -->
-                        <a href="{{ path('main_accueil') }}" class="btn btn-success">Confirm Order</a>
-                    {% else %}
-                        <!-- If guest, show the warning modal -->
-                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#loginWarningModal">
-                            Confirm Order
-                        </button>
-                    {% endif %}
-
+    <!-- If user is logged in, allow order submission -->
+    <form action="{{ path('cart_confirm') }}" method="post">
+        <button type="submit" class="btn btn-warning">
+            Confirm Order
+        </button>
+    </form>
+{% else %}
+    <!-- If guest, show the warning modal -->
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#loginWarningModal">
+        Confirm Order
+    </button>
+{% endif %}
                 </div>
             </div>
         </div>
@@ -114,5 +117,32 @@
       </div>
     </div>
   </div>
-  
+
+<script>
+//       document.getElementById('confirmOrderBtn').addEventListener('click', function () {
+//     // Trigger the AJAX request to confirm the order
+//     fetch('/cart/confirm', {  // Corrected the route here
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({})  // No data needed for now
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.status === 'success') {
+//             alert('Votre commande a été confirmée!');
+//             // Optionally, reload the page or navigate to a success page
+//             window.location.href = "/order-success";  // Redirect to a success page
+//         } else {
+//             alert('Une erreur est survenue. Veuillez réessayer.');
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Erreur lors de la confirmation de la commande:', error);
+//     });
+// });
+
+</script>
+ 
 {% endblock %}

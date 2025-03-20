@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route; // Keep this one
 use App\Entity\Plats;
+use App\Entity\Commands;
+use App\Entity\Detail;
 use App\Repository\PlatsRepository;
 use App\Repository\PanierRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -139,19 +141,63 @@ public function deleteFromCart(SessionInterface $session, Plats $plats): Respons
 
 
 #[Route('/cart/confirm', name: 'cart_confirm')]
-public function confirmOrder(SessionInterface $session): Response
-{
+public function confirmOrder(
+    SessionInterface $session,
+    EntityManagerInterface $entityManager
+): Response {
     // Check if the user is logged in
-    if (!$this->getUser()) {
-
+    $user = $this->getUser();
+    if (!$user) {
         $this->addFlash('warning', 'Please login or register to proceed with your order.');
-        // Redirect guest users to the registration page
         return $this->redirectToRoute('cart_detail');
     }
 
-    // If logged in, redirect to checkout
-    return $this->redirectToRoute('main_accueil');
-}
+    // Retrieve cart data from the session
+    $cart = $session->get('cart', []);
+    if (empty($cart)) {
+        $this->addFlash('warning', 'Your cart is empty.');
+        return $this->redirectToRoute('cart_detail');
+    }
 
+    // Create a new command (order)
+    $command = new Commands();
+    $command->setCommandEtat('pending'); // Set order status
+    $command->setCommandDate(new \DateTime()); // Current date
+    $command->setUser($user); // Link the logged-in user
+    $entityManager->persist($command);
+
+    $total = 0;
+
+    // Loop through the cart to add detail to the command
+    foreach ($cart as $platId => $quantity) {
+        $plat = $entityManager->getRepository(Plats::class)->find($platId);
+
+        if ($plat) {
+            // Create a new detail
+            $detail = new Detail();
+            $detail->setPlat($plat);
+            $detail->setQuantite($quantity);
+            $detail->setCommande($command); // Link detail to the command
+
+            // Persist the detail
+            $entityManager->persist($detail);
+
+            // Calculate the total price
+            $total += $plat->getPlatPrix() * $quantity;
+        }
+    }
+
+    // Set the total amount for the command
+    $command->setTotal($total);
+
+    // Save the command and details
+    $entityManager->flush();
+
+    // Clear the cart after confirmation
+    $session->remove('cart');
+
+    $this->addFlash('success', 'Your order has been successfully placed!');
+    return $this->redirectToRoute('main_plats');
+}
 
 }

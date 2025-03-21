@@ -193,11 +193,10 @@ public function confirmOrder(
     // Save the command and details
     $entityManager->flush();
 
-    // Clear the cart after confirmation
+    // Clears the cart after confirmation
     $session->remove('cart');
 
-    $this->addFlash('success', 'Your order has been successfully placed!');
+    $this->addFlash('success', 'Votre commande a été passée avec succès !');
     return $this->redirectToRoute('main_plats');
 }
-
 }

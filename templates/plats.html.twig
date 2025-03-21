@@ -1,7 +1,7 @@
 {% extends 'main.html.twig' %}
 
 {% block body %}
-      <!-- navbar starts -->
+      <!-- navbar starts -->  
            <!-- navbar ends -->
             <div class="header">
               <div class="header-text ">
@@ -10,56 +10,17 @@
                 </h1>
               </div>
             </div>
-            <div class="offcanvas offcanvas-end test" id="demo">
-              <div class="offcanvas-header">
-                <h1 class="offcanvas-title">Votre orders</h1>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-              </div>
-              <div class="offcanvas-body">
-                <div class="cart-item ">
-                  <div class="d-flex justify-content-between">
-                      <div>
-                          <h4 class="mt-2 mb-2">Breakfast</h4>
-                          <img src="../src/delicious-traditional-tacos-arrangement.jpg" class="order-image" alt="order photo">
-                          <div class="cart-controls mt-2 d-flex">
-                              <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-dash"></i></button>
-                              <span class="mx-2">2</span>
-                              <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus"></i></button>
-                              <button class="btn btn-outline-danger btn-sm ms-3"><i class="bi bi-trash"></i></button>
-                          </div>
-                      </div>
-                      <div class="text-end">
-                          <h5>$10.50 each</h5>
-                      </div>
-                  </div>
-              </div>
-              <div class="cart-item ">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h4 class="mt-2 mb-2">Breakfast</h4>
-                        <img src="../src/delicious-traditional-tacos-arrangement.jpg" class="order-image" alt="order photo">
-                        <div class="cart-controls mt-2 d-flex">
-                            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-dash"></i></button>
-                            <span class="mx-2">2</span>
-                            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-plus"></i></button>
-                            <button class="btn btn-outline-danger btn-sm ms-3"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </div>
-                    <div class="text-end">
-                        <h5>$10.50 each</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-4">
-              <h5>Total: $21.00</h5>
-            <button class="btn btn-warning mt-3 mb-3" onclick="ordersubmit()">Commander</button>
-            </div>
-          </div>
-        </div>
+       
           
             <!-- start of (tacos) -->
      <div class="bg pb-3">
-
+        {% for label, messages in app.flashes %}
+        <div class="alert alert-{{ label }}" role="alert">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endfor %}
 
      {% for category, plats in categories %}
      <div class="container p-3 mt-5" id="{{ category|lower|replace({' ': '-'}) }}">

@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Service\MailerService;
+
+
 
 
 
@@ -138,24 +141,23 @@ public function deleteFromCart(SessionInterface $session, Plats $plats): Respons
     return $this->redirectToRoute('cart_detail'); // Redirect back to cart
 }
 
-
-
 #[Route('/cart/confirm', name: 'cart_confirm')]
 public function confirmOrder(
     SessionInterface $session,
-    EntityManagerInterface $entityManager
+    EntityManagerInterface $entityManager,
+    MailerService $mailerService // Inject the mailer service
 ): Response {
     // Check if the user is logged in
     $user = $this->getUser();
     if (!$user) {
-        $this->addFlash('warning', 'Please login or register to proceed with your order.');
+        $this->addFlash('warning', 'Veuillez vous connecter ou vous inscrire pour poursuivre votre commande.');
         return $this->redirectToRoute('cart_detail');
     }
 
     // Retrieve cart data from the session
     $cart = $session->get('cart', []);
     if (empty($cart)) {
-        $this->addFlash('warning', 'Your cart is empty.');
+        $this->addFlash('warning', 'Votre panier est vide.');
         return $this->redirectToRoute('cart_detail');
     }
 
@@ -193,10 +195,22 @@ public function confirmOrder(
     // Save the command and details
     $entityManager->flush();
 
-    // Clears the cart after confirmation
+    // Send confirmation email to admin
+    $mailerService->sendEmail(
+        'naeibinazari@gmail.com', // the admin's email address
+        '<p>Une nouvelle commande a été passée par ' . $user->getEmail() . '</p>' .
+        '<p>Total: €' . $total . '</p>' .
+        '<p>ID de la commande: ' . $command->getId() . '</p>',
+        'Nouvelle commande passée'
+    );
+
+    // Clear the cart after confirmation
     $session->remove('cart');
 
+    // Add flash message and redirect
     $this->addFlash('success', 'Votre commande a été passée avec succès !');
     return $this->redirectToRoute('main_plats');
 }
+
+
 }

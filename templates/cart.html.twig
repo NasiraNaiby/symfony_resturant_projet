@@ -1,112 +1,111 @@
 {% extends 'main.html.twig' %}
 {% block body %}
-<section class="h-100 h-custom" style="margin-top: 6rem;">
-<div class="container py-5 h-100">
-<div class="row d-flex justify-content-center align-items-center h-100">
-<div class="col-12">
-<div class="card card-registration card-registration-2" style="border-radius: 15px;">
-    <div class="card-body p-0">
-        <div class="row g-0">
-            <div class="col-lg-8">
-                <div class="p-5">
-                    <div class="d-flex justify-content-between align-items-center mb-5">
-                        <h1 class="fw-bold mb-0">Shopping Cart</h1>
-                        <h6 class="mb-0 text-muted"></h6>
-                    </div>
-                    <hr class="my-4">
-                    {% if data is not empty %}
-                    {% for item in data %}
-                        <div class="row mb-4 d-flex justify-content-between align-items-center">
-                            <div class="col-md-2 col-lg-2 col-xl-2">
-                                <img src="{{ asset('uploads/' ~ item.plats.platPhoto) }}" class="img-fluid rounded-3" alt="">
+<section class="h-100 h-custom" style="margin-top: 6rem; margin-bottom: 6rem;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12">
+                <div class="card card-registration card-registration-2" style="border-radius: 15px;">
+                    <div class="card-body p-0">
+                        <div class="row g-0">
+                            <div class="col-lg-8">
+                                <div class="p-5">
+                                    <div class="d-flex justify-content-between align-items-center mb-5">
+                                        <h1 class="fw-bold mb-0">Shopping Cart</h1>
+                                        <h6 class="mb-0 text-muted"></h6>
+                                    </div>
+                                    <hr class="my-4">
+                                    {% if data is not empty %}
+                                    {% for item in data %}
+                                        <div class="row mb-4 d-flex justify-content-between align-items-center">
+                                            <div class="col-md-2 col-lg-2 col-xl-2">
+                                                <img src="{{ asset('uploads/' ~ item.plats.platPhoto) }}" class="img-fluid rounded-3" alt="">
+                                            </div>
+                                            <div class="col-md-3 col-lg-3 col-xl-3">
+                                                <h6 class="mb-0">{{ item.plats.platNom }}</h6>
+                                            </div>
+                                            <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
+                                                <!-- Decrease quantity button -->
+                                                <a href="{{ path('cart_remove', { id: item.plats.id }) }}" class="btn btn-link px-2">
+                                                    <i class="fas fa-minus"></i>
+                                                </a>
+                        
+                                                <!-- Quantity display -->
+                                                <input min="1" name="quantite" value="{{ item.quantite }}" type="number"
+                                                       class="form-control form-control-sm" readonly />
+                        
+                                                <!-- Increase quantity button -->
+                                                <a href="{{ path('app_cart', { id: item.plats.id }) }}" class="btn btn-link px-2">
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                                <h6 class="mb-0">€{{ item.plats.platPrix * item.quantite }}</h6>
+                                            </div>
+                                            <div class="col-md-1 col-lg-1 col-xl-1 text-end">
+                                                <a href="{{ path('cart_delete', { id: item.plats.id }) }}" class="text-muted">
+                                                    <i class="fas fa-times"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <hr class="my-4">
+                                    {% endfor %}
+                                    <div class="pt-5">
+                                        <h6 class="mb-0"><a href="{{ path('main_plats') }}" class="text-body"><i
+                                                class="fas fa-long-arrow-alt-left me-2"></i>Back to Menu</a></h6>
+                                    </div>
+                                    {% else %}
+                                        <p class="text-danger fw-bold">Votre panier est vide.</p>
+                                        {% for label, messages in app.flashes %}
+                                        <div class="alert alert-{{ label }}" role="alert">
+                                            {% for message in messages %}
+                                                {{ message }}
+                                            {% endfor %}
+                                        </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div class="col-md-3 col-lg-3 col-xl-3">
-                                <h6 class="mb-0">{{ item.plats.platNom }}</h6>
-                            </div>
-                            <div class="col-md-3 col-lg-3 col-xl-2 d-flex">
-                                <!-- Decrease quantity button -->
-                                <a href="{{ path('cart_remove', { id: item.plats.id }) }}" class="btn btn-link px-2">
-                                    <i class="fas fa-minus"></i>
-                                </a>
-                
-                                <!-- Quantity display -->
-                                <input min="1" name="quantite" value="{{ item.quantite }}" type="number"
-                                       class="form-control form-control-sm" readonly />
-                
-                                <!-- Increase quantity button -->
-                                <a href="{{ path('app_cart', { id: item.plats.id }) }}" class="btn btn-link px-2">
-                                    <i class="fas fa-plus"></i>
-                                </a>
-                            </div>
-                            <div class="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                <h6 class="mb-0">€{{ item.plats.platPrix * item.quantite }}</h6>
-                            </div>
-                            <div class="col-md-1 col-lg-1 col-xl-1 text-end">
-                                <a href="{{ path('cart_delete', { id: item.plats.id }) }}" class="text-muted">
-                                    <i class="fas fa-times"></i>
-                                </a>
+
+                            <div class="col-lg-4 bg-body-tertiary">
+                                <div class="p-5">
+                                    <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
+                                    <hr class="my-4">
+                                    <div class="d-flex justify-content-between mb-4">
+                                        <h5 class="text-uppercase">Items {{ data|length }}</h5>
+                                        <h5>€ {{ data|reduce((carry, item) => carry + (item.plats.platPrix * item.quantite), 0) }}</h5>
+                                    </div>
+                                    <hr class="my-4">
+                                    <div class="d-flex justify-content-between mb-5">
+                                        <h5 class="text-uppercase">Total Prix</h5>
+                                        <h5>€ {{ data|reduce((carry, item) => carry + (item.plats.platPrix * item.quantite), 0) }}</h5>
+                                    </div>
+
+                                    {% if data is not empty %}
+                                        {% if app.user %}
+                                        <!-- If user is logged in, allow order submission -->
+                                        <form action="{{ path('cart_confirm') }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir confirmer votre commande ?');">
+                                            <button type="submit" class="btn btn-warning">
+                                                Confirm command
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                            <!-- If guest, show the warning modal -->
+                                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#loginWarningModal">
+                                                Confirm Order
+                                            </button>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                        <hr class="my-4">
-                    {% endfor %}
-                {% else %}
-                    <p>Your cart is empty.</p>
-                    {% for label, messages in app.flashes %}
-                    <div class="alert alert-{{ label }}" role="alert">
-                        {% for message in messages %}
-                            {{ message }}
-                        {% endfor %}
                     </div>
-                    {% endfor %}
-                {% endif %}
-                
-
-                    <div class="pt-5">
-                        <h6 class="mb-0"><a href="{{ path('main_plats') }}" class="text-body"><i
-                                class="fas fa-long-arrow-alt-left me-2"></i>Back to Menu</a></h6>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-4 bg-body-tertiary">
-                <div class="p-5">
-                    <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
-                    <hr class="my-4">
-                    <div class="d-flex justify-content-between mb-4">
-                        <h5 class="text-uppercase">Items {{ data|length }}</h5>
-                        <h5>€ {{ data|reduce((carry, item) => carry + (item.plats.platPrix * item.quantite), 0) }}</h5>
-                    </div>
-                    <hr class="my-4">
-                    <div class="d-flex justify-content-between mb-5">
-                        <h5 class="text-uppercase">Total Prix</h5>
-                        <h5>€ {{ data|reduce((carry, item) => carry + (item.plats.platPrix * item.quantite), 0) }}</h5>
-                    </div>
-
-                    {% if app.user %}
-    <!-- If user is logged in, allow order submission -->
-    <form action="{{ path('cart_confirm') }}" method="post">
-        <button type="submit" class="btn btn-warning">
-            Confirm Order
-        </button>
-    </form>
-{% else %}
-    <!-- If guest, show the warning modal -->
-    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#loginWarningModal">
-        Confirm Order
-    </button>
-{% endif %}
                 </div>
             </div>
         </div>
     </div>
-</div>
-</div>
-</div>
-</div>
 </section>
 
-
-<!-- Bootstrap Modal for Warning meesage to user to proceed the command  -->
+<!-- Bootstrap Modal for Warning message to user to proceed with the command -->
 <div class="modal fade" id="loginWarningModal" tabindex="-1" aria-labelledby="loginWarningModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -115,7 +114,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            Vous devez <strong>vous connecter</strong>  pour poursuivre votre commande.
+            Vous devez <strong>vous connecter</strong> pour poursuivre votre commande.
         </div>
         <div class="modal-footer">
           <a href="{{ path('app_login') }}" class="btn btn-primary">Login</a>
@@ -123,33 +122,5 @@
         </div>
       </div>
     </div>
-  </div>
-
-<script>
-//       document.getElementById('confirmOrderBtn').addEventListener('click', function () {
-//     // Trigger the AJAX request to confirm the order
-//     fetch('/cart/confirm', {  // Corrected the route here
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({})  // No data needed for now
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.status === 'success') {
-//             alert('Votre commande a été confirmée!');
-//             // Optionally, reload the page or navigate to a success page
-//             window.location.href = "/order-success";  // Redirect to a success page
-//         } else {
-//             alert('Une erreur est survenue. Veuillez réessayer.');
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Erreur lors de la confirmation de la commande:', error);
-//     });
-// });
-
-</script>
- 
+</div>
 {% endblock %}

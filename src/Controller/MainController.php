@@ -36,34 +36,39 @@ final class MainController extends AbstractController{
     //     return $this->render('command.html.twig');
     // }
 
-
     #[Route('/search', name: 'search')]
-public function search(EntityManagerInterface $entityManager, Request $request): Response
-{
-    // Get the search query from the request
-    $query = $request->query->get('user_value', '');
-
-    // Get the repository for the Plats entity
-    $repository = $entityManager->getRepository(Plats::class);
-
-    // Perform a search: For example, find plats by name or description
-    if (!empty($query)) {
-        $plats = $repository->createQueryBuilder('p')
-            ->where('p.plat_nom LIKE :query OR p.plat_description LIKE :query')
-            ->setParameter('query', '%' . $query . '%')
-            ->getQuery()
-            ->getResult();
-    } else {
-        // If no query is provided, retrieve all plats
-        $plats = $repository->findAll();
+    public function search(EntityManagerInterface $entityManager, Request $request): Response
+    {
+        // Retrieve the search query and category from the request
+        $query = $request->query->get('user_value', '');
+        $categoryName = $request->query->get('category', '');
+    
+        // Get the repository for the Plats entity
+        $repository = $entityManager->getRepository(Plats::class);
+    
+        // Build the query
+        $queryBuilder = $repository->createQueryBuilder('p')
+            ->join('p.categorie', 'c') // Join the Categories entity
+            ->addSelect('c');         // Include category data
+  
+    
+        // Filter by category name if provided
+        if (!empty($categoryName)) {
+            $queryBuilder->andWhere('c.cat_nom = :category')
+                         ->setParameter('category', $categoryName);
+        }
+    
+        // Execute the query and get results
+        $plats = $queryBuilder->getQuery()->getResult();
+    
+        // Render the results in the Twig template
+        return $this->render('search.html.twig', [
+            'plats' => $plats,           // Pass plats to the template
+            'query' => $query,           // Pass the search term for feedback
+            'category' => $categoryName, // Pass the selected category for feedback and highlighting
+        ]);
     }
-
-    // Render the results in the Twig template
-    return $this->render('search.html.twig', [
-        'plats' => $plats,
-        'query' => $query, // Pass the search term for user feedback
-    ]);
-}
+    
 
 
 #[Route('/', name: 'main_accueil')]
@@ -152,10 +157,5 @@ public function accueil(EntityManagerInterface $entityManager): Response
         ]);
     }
     
-
-    
-
-    
-   
   
 }

@@ -17,7 +17,7 @@ class MailerService {
 
     public function sendEmail(string $to, string $content, string $subject): void {
         $email = (new Email())
-            ->from('naeibinazari@gmail.com') // Replace with your "from" email
+            ->from('naeibinazari@gmail.com') 
             ->to($to)
             ->subject($subject)
             ->html($content);

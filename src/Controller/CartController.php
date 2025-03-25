@@ -145,32 +145,32 @@ public function deleteFromCart(SessionInterface $session, Plats $plats): Respons
 public function confirmOrder(
     SessionInterface $session,
     EntityManagerInterface $entityManager,
-    MailerService $mailerService // Inject the mailer service
+    MailerService $mailerService // Injection of  the mailer service
 ): Response {
-    // Check if the user is logged in
+    // Checks if the user is logged in
     $user = $this->getUser();
     if (!$user) {
         $this->addFlash('warning', 'Veuillez vous connecter ou vous inscrire pour poursuivre votre commande.');
         return $this->redirectToRoute('cart_detail');
     }
 
-    // Retrieve cart data from the session
+    // Retrieves cart data from the session
     $cart = $session->get('cart', []);
     if (empty($cart)) {
         $this->addFlash('warning', 'Votre panier est vide.');
         return $this->redirectToRoute('cart_detail');
     }
 
-    // Create a new command (order)
+    // Creates a new command (order)
     $command = new Commands();
-    $command->setCommandEtat('pending'); // Set order status
+    $command->setCommandEtat('pending'); // Sets order status
     $command->setCommandDate(new \DateTime()); // Current date
     $command->setUser($user); // Link the logged-in user
     $entityManager->persist($command);
 
     $total = 0;
 
-    // Loop through the cart to add detail to the command
+    // Loops through the cart to add detail to the command
     foreach ($cart as $platId => $quantity) {
         $plat = $entityManager->getRepository(Plats::class)->find($platId);
 

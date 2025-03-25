@@ -160,7 +160,6 @@
 </div>
 
 
-
         
      <hr>
      <div class="container p-1" >
@@ -171,60 +170,15 @@
           </div>
       </div> 
 
-       <div class="container">
-        <div class="row mb-4 d-flex justify-content-between ">
-            <div class="col-lg-6 col-md-12  ">
-                <div class="card contact-card" style="border: none;">
-                    <div class="card-body d-flex align-items-center">
-                        <i class="bi bi-geo-alt-fill contact-icon-style" ></i>
-                        <div>
-                            <h4 class="contact-card-title mb-0 fs-5">Adresse</h4>
-                            <p class="card-text">535022 le addrese ici </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-12 ">
-                <div class="card contact-card" style="border: none;">
-                    <div class="card-body d-flex align-items-center">
-                        <i class="bi bi-telephone-fill contact-icon-style" ></i>
-                        <div>
-                            <h4 class="card-title mb-0 fs-5">Appelez-nous</h4>
-                            <p class="card-text">+33 589 55488 55</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row mb-4">
-            <div class="col-lg-6 col-md-12">
-                <div class="card contact-card" style="border: none;">
-                    <div class="card-body d-flex align-items-center">
-                        <i class="icon bi bi-envelope contact-icon-style" ></i>
-                        <div>
-                            <h4 class="card-title mb-0 fs-5">Envoyez-nous un email</h4>
-                            <p class="card-text">info@example.com</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6 col-md-12">
-                <div class="card contact-card" style="border: none;">
-                    <div class="card-body d-flex align-items-center">
-                        <i class="bi bi-clock-fill contact-icon-style" ></i>
-                        <div>
-                            <h4 class="card-title mb-0 fs-5">Horaires d'ouverture</h4>
-                            <p class="card-text">Lun-Sem: 11h - 23h; Dimanche: Férme</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+      {% if message  %}
+      <div class="alert alert-success text-center" role="alert">
+          {{ message }}
+      </div>
+      {% endif %}
     <div class="container my-4">
       <div class="row ">
         <div class="col-lg-12 col-md-6 contact-form-style py-3">
-        <form id="contactForm" action="../php/phpscript.php" method="post">
+        <form id="contactForm" action="/" method="post">
             <!-- Name input -->
             <div class="mb-3 d-flex">
                 <input class="form-control" name="name" id="name" type="text" placeholder="Nom et Prénom" required>

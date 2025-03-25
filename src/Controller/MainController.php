@@ -80,7 +80,7 @@ public function accueil(EntityManagerInterface $entityManager): Response
     $feedbacks = array_slice($feedbacks, 0, 3);
 
 
-    $filepath = "assets/uploads/";
+    $filepath = "/uploads/";
     // Fetch categories excluding "Boissons"
     $cats = $entityManager->getRepository(Categories::class)
         ->createQueryBuilder('c') // Use the correct entity: Categories

@@ -78,10 +78,7 @@
     <div class="row mt-5">
         {% for cat in cats %}
         <div class="col-lg-4 col-md-8 col-sm-12">
-            <div class="tacocard" style="background-image: url('{{ filepath ~ cat.cat_image }}') !important;"></div>
-            <!-- <div class="tacocard" style="background-image: url('{{ filepath ~  cat.cat_image }}');"> </div> -->
-            <!-- <div class="tacocard" style="background-image: url('{{ 'uploads/' ~ cat.cat_image}}')"> </div> -->
-             <div class="card card1 tacocard"  >
+             <div class="card card1 tacocard" style="background-image: url('{{ filepath ~ cat.cat_image }}') !important;" >
                 <div class="card-body">
                     <a href="plats.html#" style="color: white;">
                         <h5 class="card-title card-body-title">{{ cat.cat_nom }}</h5>

@@ -52,6 +52,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Commands::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commands;
 
+    #[ORM\Column(length: 20, nullable: false)]
+    private ?int $cp = null;
+
     public function __construct()
     {
         $this->commands = new ArrayCollection();
@@ -205,6 +208,18 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
                 $command->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCp(): ?string
+    {
+        return $this->cp;
+    }
+
+    public function setCp(int $cp): static
+    {
+        $this->cp = $cp;
 
         return $this;
     }

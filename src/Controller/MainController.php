@@ -15,16 +15,20 @@ use App\Service\PlatsAndCategoryHelper;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Service\MailerService;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 final class MainController extends AbstractController{
 
     private PlatsAndCategoryHelper $helper;
     private MailerService $mailerService;
+    private UserPasswordHasherInterface $passwordHasher;
 
-    public function __construct(PlatsAndCategoryHelper $helper, MailerService $mailerService)
+    public function __construct(PlatsAndCategoryHelper $helper, MailerService $mailerService, UserPasswordHasherInterface $passwordHasher)
     {
         $this->helper = $helper;
         $this->mailerService = $mailerService;
+        $this->passwordHasher = $passwordHasher;
     }
 
 
@@ -34,11 +38,98 @@ final class MainController extends AbstractController{
         return $this->render('main.html.twig');
     }
 
-    // #[Route('/checkout', name: 'cart_checkout')]
-    // public function checkout(): Response
-    // {
-    //     return $this->render('command.html.twig');
-    // }
+    //client page 
+    public function clientPage(Security $security)
+    {
+        // Get the currently logged-in user
+        $user = $security->getUser();
+
+        // Check if a user is logged in
+        if (!$user) {
+            throw $this->createAccessDeniedException('You must be logged in to access this page.');
+        }
+        return $this->render('account.html.twig', [
+            'user' => [
+                'userNom' => $user->getUserNom(),
+                'email' => $user->getEmail(),
+                'addresse' => $user->getAddresse(),
+                'tel' => $user->getTel(),
+            ],
+        ]);
+        
+    }
+
+    #[Route('/clients/update', name: 'update_profile', methods: ['GET','POST'])]
+public function updateProfile(Request $request, EntityManagerInterface $entityManager, Security $security)
+{
+    $user = $security->getUser();
+    dd($user);  
+    if (!$user) {
+        throw $this->createAccessDeniedException('You must be logged in to update your profile.');
+    }
+
+
+    $query = $entityManager->createQuery(
+        'SELECT c.command_etat, c.command_date, c.total, p.plat_nom 
+         FROM App\Entity\Commands c
+         JOIN c.details d
+         JOIN d.plat p
+         WHERE c.user = :user'
+    )->setParameter('user', $user);
+
+    $commands = $query->getResult();
+
+
+    $user->setUserNom($request->request->get('fullname'));
+    $user->setEmail($request->request->get('email'));
+    $user->setAddresse($request->request->get('addresse'));
+    $user->setTel($request->request->get('tel'));
+
+    // Handle 'cp' properly
+    $cp = (int)$request->request->get('codePostal'); // Default to 0 if not provided
+    $user->setCp($cp);
+
+    $password = $request->request->get('password');
+    if (!empty($password)) {
+        // Hash and update the new password
+        $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
+        $user->setPassword($hashedPassword);
+    } else {
+        // Do nothing, keep the existing password
+        $user->setPassword($user->getPassword());
+    }
+
+    $photo = $request->files->get('photo');
+    if ($photo) {
+        // Handle new photo upload
+        $photoName = uniqid() . '.' . $photo->guessExtension();
+        $photo->move($this->getParameter('uploads_directory'), $photoName);
+        $user->setUserPhoto($photoName);
+    } else {
+        // Do nothing, keep the existing picture
+        $user->setUserPhoto($user->getUserPhoto());
+    }
+
+    $entityManager->persist($user);
+    $entityManager->flush();
+
+
+    // $commands = $entityManager->getRepository(Commands::class)
+    // ->createQueryBuilder('c')
+    // ->leftJoin('c.details', 'd') // Join details
+    // ->leftJoin('d.plat', 'p') // Join plats
+    // ->addSelect('d', 'p') // Select details and plats
+    // ->where('c.user = :user')
+    // ->setParameter('user', $user)
+    // ->getQuery()
+    // ->getResult();
+   
+    return $this->render('clients/index.html.twig', [
+        'commands' => $commands,
+    ]);
+
+   
+}
 
     #[Route('/search', name: 'search')]
     public function search(EntityManagerInterface $entityManager, Request $request): Response
@@ -228,19 +319,6 @@ public function accueil(EntityManagerInterface $entityManager, Request $request,
         ]);
     }
     
-    // #[Route('/feedback', name: 'main_feedback')]
-    // public function feedback(EntityManagerInterface $entityManager, Request $request): Response
-    // {
-        
-    
-
-    //     // Render the response with both success message and categories
-    //     return $this->render('accueil.html.twig', [
-            
-    //         'cats' => $categories,
-    //     ]);
-        
-    // }
     
     #[Route('/plats', name: 'main_plats')]
     public function plats(EntityManagerInterface $entityManager): Response

@@ -44,18 +44,20 @@
                 
                 {% if app.user %}
                     <div class="dropdown ms-4">
-                        <a href="#" class="dropdown-toggle" role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: #ffffff;">
-                            {{ app.user.userNom }}
+                        <a href="#" class="dropdown-toggle"  role="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="color: #ffffff;">
+                            {{ app.user.userNom|slice(0, 6) }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                                 <li class="d-flex justify-content-center py-2">
-                                    <img src="{{ asset('userimage/district.png') }}" alt="User Image" class="img-thumbnail rounded-circle" style="width: 60px; height: 50px;">
+                                    <!-- <img src="{{ app.user.userPhoto }}" alt="User Image" class="img-thumbnail rounded-circle" style="width: 60px; height: 50px;"> -->
+                                    <img src="{{ asset('uploads/' ~ app.user.userPhoto) }}" alt="User Image" class="img-thumbnail rounded-circle" style="width: 60px; height: 50px;">
+
                                 </li>
                                 <li><a class="dropdown-item text-center">{{ app.user.userNom }}</a></li>
                                 <li><a href="{{ path('clients_index') }}" class="dropdown-item text-center">Profile</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-center" href="{{ path('app_logout') }}">Logout</a></li>
+                                <li><hr class="dropdown-divider">
+                                <li><a class="dropdown-item text-center" href="{{ path('app_logout') }}">Logout</a></li></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -67,7 +69,6 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="guestDropdown">
                             <li><a class="dropdown-item text-center" href="{{ path('app_login') }}">Login</a></li>
                             <li><a class="dropdown-item text-center" href="#">Register</a></li>
-                            <li><hr class="dropdown-divider"></li>
                         </ul>
                     </div>
                 {% endif %}

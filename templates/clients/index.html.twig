@@ -64,69 +64,88 @@
 <div class="d-flex flex-column min-vh-100">
 <section class="edit-section">
 <div class="container">
-<div class="col-md-10">
+<div class="col-md-12">
     <div id="client-section">
-        <!-- <?php
-        // Fetch the logged-in client data
-        $stmt = $pdo->prepare("SELECT * FROM client WHERE email = ?");
-        $stmt->execute([$client_email]);
-        $client = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($client) {
-            $clientId = $client['clId'];
-            $fullname = $client['fullName'];
-            $email = $client['email'];
-            $password = $client['password'];
-            $photo = $client['photo'];
-            $addresse = $client['addresse'];
-            $codePostal = $client['codePostal'];
-            $tel = $client['tel'];
-        } else {
-            echo "User not found.";
-            exit();
-        }
-        ?> -->
-
-        <form id="clientProfile" method="POST" action="../phpscripts/clientaction.php" style="display: none;" enctype="multipart/form-data">
+        {% if app.user %}
+        <form id="clientProfile" method="POST" action="/clients/update" style="display: none;" enctype="multipart/form-data">
             <input type="hidden" name="action" value="update">
             <!-- <input type="hidden" name="clId" value="<?php echo $clientId; ?>"> -->
             <div class="row mb-3">
                 <div class="form-group col-md-6">
-                    <input type="text" class="form-control" id="fullname" name="fullname" value="{{ user.user_nom }}">
+                    <input type="text" class="form-control mb-2" id="fullname" name="fullname" value="{{ app.user.userNom }}">
                 </div>
                 <div class="form-group col-md-6">
-                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                    <input type="email" class="form-control mb-2" id="email" name="email" value="{{ app.user.email }}">
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="form-group col-md-6">
-                    <input type="password" class="form-control" id="password" name="password">
+                    <input type="password" class="form-control mb-2" id="password" name="password" placeholder="mot de pass">
                 </div>
                 <div class="form-group col-md-6" style="position: relative;">
                     <input type="file" class="form-control" id="photo" name="photo" >
                     <span class="text-white" >
-                        {{ user.user_photo }}
+                        {{ app.user.userPhoto }}
                     </span>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="form-group col-md-6">
-                    <input type="text" class="form-control" id="addresse" name="addresse" value="{{ user.addresse }}">
+                    <input type="text" class="form-control mb-2" id="addresse" name="addresse" value="{{ app.user.addresse }}">
                 </div>
                 <div class="form-group col-md-6">
-                    <input type="text" class="form-control" id="codePostal" name="codePostal">
+                    <input type="text" class="form-control mb-2" id="codePostal" name="codePostal" placeholder="codePostal"  value="{{ app.user.cp }}">
                 </div>
-                
             </div>
             <div class="row mb-3">
                 <div class="form-group col-md-6">
-                    <input type="text" class="form-control" id="tel" name="tel" value="{{ user.tel }}">
+                    <input type="text" class="form-control mb-2" id="tel" name="tel" value="{{ app.user.tel }}">
                 </div>   
             </div>
 
-            <button type="submit" class="btn btn-primary mt-3">Update</button>
+            <button type="submit" class="btn btn-primary mt-3 mb-3">Update</button>
         </form>
+        {% else %}
+    <p>No user data available.</p>
+    {% endif %}
     </div>
+
+
+    <!-- user commands section -->
+    <div class="card justify-content-center" >
+        <div class="card-body">
+          <div class="table-responsive">
+            {% if commands is defined and commands is not empty %}
+    <table class="table table-hover mb-0">
+        <thead>
+            <tr>
+                <th scope="col">État de la Commande</th>
+                <th scope="col">Date</th>
+                <th scope="col">Total</th>
+                <th scope="col">Plats Commandés</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for command in commands %}
+                <tr>
+                    <td>{{ command.command_etat }}</td>
+                    <td>{{ command.command_date|date('d-m-Y') }}</td>
+                    <td>{{ command.total }} €</td>
+                    <td>{{ command.plat_nom }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>Aucune commande trouvée.</p>
+{% endif %}
+
+            
+          </div>
+        </div>
+      </div>
+
+    
 </div>
 </section>
 

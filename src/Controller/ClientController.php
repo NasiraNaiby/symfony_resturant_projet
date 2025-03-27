@@ -14,8 +14,15 @@ final class ClientController extends AbstractController{
     public function clients(EntityManagerInterface $entityManager): Response
     {  
         $repository = $entityManager->getRepository(Users::class); 
-        $user = $repository->findAll();
+        // $user = $repository->findAll();
+        $user = $this->getUser();
+        //$commands = $this->getUserOrders($entityManager, $user);
+        dump($user);
         return $this->render('clients/index.html.twig', ['user'=>$user]);
         
     }
+
+
+
+ 
 }

@@ -25,8 +25,9 @@ class Categories
     /**
      * @var Collection<int, Plats>
      */
-    #[ORM\OneToMany(targetEntity: Plats::class, mappedBy: 'categories', orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'categorie', targetEntity: Plats::class)]
     private Collection $plats;
+    
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $cat_image = null;

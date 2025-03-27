@@ -59,110 +59,101 @@ final class MainController extends AbstractController{
         
     }
 
-    #[Route('/clients/update', name: 'update_profile', methods: ['GET','POST'])]
+#[Route('/clients/update', name: 'update_profile', methods: ['GET', 'POST'])]
 public function updateProfile(Request $request, EntityManagerInterface $entityManager, Security $security)
 {
     $user = $security->getUser();
-    dd($user);  
+
+
     if (!$user) {
         throw $this->createAccessDeniedException('You must be logged in to update your profile.');
     }
 
+    // Handle profile update (same as before)
+    if ($request->isMethod('POST')) {
+        $user->setUserNom($request->request->get('fullname'));
+        $user->setEmail($request->request->get('email'));
+        $user->setAddresse($request->request->get('addresse'));
+        $user->setTel($request->request->get('tel'));
 
-    $query = $entityManager->createQuery(
-        'SELECT c.command_etat, c.command_date, c.total, p.plat_nom 
-         FROM App\Entity\Commands c
-         JOIN c.details d
-         JOIN d.plat p
-         WHERE c.user = :user'
-    )->setParameter('user', $user);
+        // Handles the users password change
+        $password = $request->request->get('password');
+        if (!empty($password)) {
+            $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
+            $user->setPassword($hashedPassword);
+        }
 
-    $commands = $query->getResult();
+        // this is to handle the user  photo upload
+        $photo = $request->files->get('photo');
+        if ($photo) {
+            $photoName = uniqid() . '.' . $photo->guessExtension();
+            $photo->move($this->getParameter('uploads_directory'), $photoName);
+            $user->setUserPhoto($photoName);
+        }
 
-
-    $user->setUserNom($request->request->get('fullname'));
-    $user->setEmail($request->request->get('email'));
-    $user->setAddresse($request->request->get('addresse'));
-    $user->setTel($request->request->get('tel'));
-
-    // Handle 'cp' properly
-    $cp = (int)$request->request->get('codePostal'); // Default to 0 if not provided
-    $user->setCp($cp);
-
-    $password = $request->request->get('password');
-    if (!empty($password)) {
-        // Hash and update the new password
-        $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
-        $user->setPassword($hashedPassword);
-    } else {
-        // Do nothing, keep the existing password
-        $user->setPassword($user->getPassword());
+        $entityManager->persist($user);
+        $entityManager->flush();
     }
 
-    $photo = $request->files->get('photo');
-    if ($photo) {
-        // Handle new photo upload
-        $photoName = uniqid() . '.' . $photo->guessExtension();
-        $photo->move($this->getParameter('uploads_directory'), $photoName);
-        $user->setUserPhoto($photoName);
-    } else {
-        // Do nothing, keep the existing picture
-        $user->setUserPhoto($user->getUserPhoto());
-    }
-
-    $entityManager->persist($user);
-    $entityManager->flush();
-
-
-    // $commands = $entityManager->getRepository(Commands::class)
-    // ->createQueryBuilder('c')
-    // ->leftJoin('c.details', 'd') // Join details
-    // ->leftJoin('d.plat', 'p') // Join plats
-    // ->addSelect('d', 'p') // Select details and plats
-    // ->where('c.user = :user')
-    // ->setParameter('user', $user)
-    // ->getQuery()
-    // ->getResult();
-   
+    $commands = $this->getUserOrders($entityManager, $user);
+    dd($commands); // Output the commands
+    die(); // Stop further execution temporarily to inspect
+    
     return $this->render('clients/index.html.twig', [
         'commands' => $commands,
     ]);
-
-   
+ 
 }
 
-    #[Route('/search', name: 'search')]
-    public function search(EntityManagerInterface $entityManager, Request $request): Response
-    {
-        // Retrieve the search query and category from the request
-        $query = $request->query->get('user_value', '');
-        $categoryName = $request->query->get('category', '');
-    
-        // Get the repository for the Plats entity
-        $repository = $entityManager->getRepository(Plats::class);
-    
-        // Build the query
-        $queryBuilder = $repository->createQueryBuilder('p')
-            ->join('p.categorie', 'c') // Join the Categories entity
-            ->addSelect('c');         // Include category data
+private function getUserOrders(EntityManagerInterface $entityManager, $user, LoggerInterace $logger)
+{
+
   
-    
-        // Filter by category name if provided
-        if (!empty($categoryName)) {
-            $queryBuilder->andWhere('c.cat_nom = :category')
-                         ->setParameter('category', $categoryName);
-        }
-    
-        // Execute the query and get results
-        $plats = $queryBuilder->getQuery()->getResult();
-    
-        // Render the results in the Twig template
-        return $this->render('search.html.twig', [
-            'plats' => $plats,           // Pass plats to the template
-            'query' => $query,           // Pass the search term for feedback
-            'category' => $categoryName, // Pass the selected category for feedback and highlighting
-        ]);
+    $logger->info('getUserOrders function called');
+    return $entityManager->getRepository(Commands::class)
+        ->createQueryBuilder('c')
+        ->leftJoin('c.detail', 'd')
+        ->leftJoin('d.plat', 'p')
+        ->addSelect('d', 'p')
+        ->select('c.command_etat', 'c.command_date', 'c.total', 'p.plat_nom')
+        ->where('c.user = :user')
+        ->setParameter('user', $user)
+        ->getQuery()
+        ->getResult();
+}
+
+#[Route('/search', name: 'search')]
+public function search(EntityManagerInterface $entityManager, Request $request): Response
+{
+    // Retrieve the search query and category from the request
+    $query = $request->query->get('user_value', '');
+    $categoryName = $request->query->get('category', '');
+
+    // Get the repository for the Plats entity
+    $repository = $entityManager->getRepository(Plats::class);
+
+    // Build the query
+    $queryBuilder = $repository->createQueryBuilder('p')
+        ->join('p.categorie', 'c') // Join the Categories entity
+        ->addSelect('c');         // Include category data
+
+
+    // Filter by category name if provided
+    if (!empty($categoryName)) {
+        $queryBuilder->andWhere('c.cat_nom = :category')
+                        ->setParameter('category', $categoryName);
     }
+
+    // Execute the query and get results
+    $plats = $queryBuilder->getQuery()->getResult();
+
+    // Render the results in the Twig template
+    return $this->render('search.html.twig', [
+        'plats' => $plats,           // Pass plats to the template
+        'query' => $query,           // Pass the search term for feedback
+        'category' => $categoryName, // Pass the selected category for feedback and highlighting
+    ]);
+}
     
 
 #[Route('/', name: 'main_accueil')]

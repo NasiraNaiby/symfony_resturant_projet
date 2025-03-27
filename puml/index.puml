@@ -1,0 +1,68 @@
+@startuml
+class Plats {
+	**id : int**
+	plat_nom : string
+	plat_description : string
+	plat_prix : float
+	plat_photo : string
+	active : bool
+	<color:#0000dd>categorie : Categories</color>
+	<color:#0000dd>details : Detail[]</color>
+}
+
+class Users {
+	**id : int**
+	email : string
+	roles : array
+	password : string
+	user_nom : string
+	addresse : string
+	user_photo : string
+	tel : string
+	<color:#0000dd>commands : Commands[]</color>
+	cp : int
+}
+
+class Commands {
+	**id : int**
+	command_etat : string
+	command_date : DateTimeInterface
+	<color:#0000dd>user : Users</color>
+	total : string
+	<color:#0000dd>details : Detail[]</color>
+}
+
+class Detail {
+	**id : int**
+	quantite : int
+	<color:#0000dd>commande : Commands</color>
+	<color:#0000dd>plat : Plats</color>
+}
+
+class Feedback {
+	**id : int**
+	name : string
+	number : string
+	email : string
+	message : string
+}
+
+class Categories {
+	**id : int**
+	cat_nom : string
+	cat_description : string
+	<color:#0000dd>plats : Plats[]</color>
+	cat_image : string
+}
+
+Plats "*"--"1" Categories
+Plats "1"--"*" Detail
+Users "1"--"*" Commands
+Commands "1"--"*" Detail
+
+
+hide methods
+
+hide circle
+
+@enduml

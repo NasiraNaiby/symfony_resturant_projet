@@ -23,36 +23,6 @@ use App\Service\MailerService;
 
 final class CartController extends AbstractController{
 
-   
-
-// #[Route('/add/{id}', name: 'app_cart')]
-// public function add(Plats $plats, SessionInterface $session, Request $request): Response
-// {
-//     $id = $plats->getId();
-//     $cart = $session->get('cart', []);
-
-//     // Increment quantity if exists, otherwise set it to 1
-//     if (empty($cart[$id])) {
-//         $cart[$id] = 1;
-//     } else {
-//         $cart[$id]++;
-//     }
-
-//     // Save updated cart in session
-//     $session->set('cart', $cart);
-
-//     // Get the referer URL (previous page)
-//     $referer = $request->headers->get('referer');
-
-//     // If referer is not null, redirect back to the previous page
-//     if ($referer) {
-//         return new RedirectResponse($referer);
-//     }
-
-//     // Fallback: If referer is empty, redirect to cart_detail by default
-//     return $this->redirectToRoute('cart_detail');
-// }
-
 
 #[Route('/add/{id}', name: 'app_cart')]
 public function add(Plats $plats, SessionInterface $session, Request $request): Response
@@ -141,76 +111,164 @@ public function deleteFromCart(SessionInterface $session, Plats $plats): Respons
     return $this->redirectToRoute('cart_detail'); // Redirect back to cart
 }
 
-#[Route('/cart/confirm', name: 'cart_confirm')]
+
+#[Route('/cart/confirm', name: 'cart_confirm', methods: ['POST'])]
 public function confirmOrder(
+    Request $request,
     SessionInterface $session,
     EntityManagerInterface $entityManager,
-    MailerService $mailerService // Injection of  the mailer service
-): Response {
-    // Checks if the user is logged in
+    MailerService $mailerService
+) {
     $user = $this->getUser();
     if (!$user) {
-        $this->addFlash('warning', 'Veuillez vous connecter ou vous inscrire pour poursuivre votre commande.');
+        $this->addFlash('warning', 'Veuillez vous connecter pour continuer.');
         return $this->redirectToRoute('cart_detail');
     }
 
-    // Retrieves cart data from the session
     $cart = $session->get('cart', []);
     if (empty($cart)) {
         $this->addFlash('warning', 'Votre panier est vide.');
         return $this->redirectToRoute('cart_detail');
     }
 
-    // Creates a new command (order)
+    // retrive the payment method for the payemnt 
+    $paymentMethod = $request->request->get('payment_method');
+    if (!$paymentMethod) {
+        $this->addFlash('danger', 'Veuillez sélectionner un mode de paiement.');
+        return $this->redirectToRoute('cart_detail');
+    }
+
+    // retriving the address and the postal code if the user had modified 
+    $newAddress = $request->request->get('user_address');
+    $newPostalCode = $request->request->get('user_cp');
+
+    if (!empty($newAddress) && !empty($newPostalCode)) {
+        $user->setAddresse($newAddress);
+        $user->setCp($newPostalCode);
+        $entityManager->persist($user);
+    }
+
+    // createing the commands 
     $command = new Commands();
-    $command->setCommandEtat('pending'); // Sets order status
-    $command->setCommandDate(new \DateTime()); // Current date
-    $command->setUser($user); // Link the logged-in user
+    $command->setCommandEtat('pending');
+    $command->setCommandDate(new \DateTime());
+    $command->setUser($user);
+    $command->setPaymentMethod($paymentMethod);
     $entityManager->persist($command);
 
     $total = 0;
 
-    // Loops through the cart to add detail to the command
     foreach ($cart as $platId => $quantity) {
         $plat = $entityManager->getRepository(Plats::class)->find($platId);
-
         if ($plat) {
-            // Create a new detail
             $detail = new Detail();
             $detail->setPlat($plat);
             $detail->setQuantite($quantity);
-            $detail->setCommande($command); // Link detail to the command
-
-            // Persist the detail
+            $detail->setCommande($command);
             $entityManager->persist($detail);
-
-            // Calculate the total price
             $total += $plat->getPlatPrix() * $quantity;
         }
     }
 
-    // Set the total amount for the command
     $command->setTotal($total);
-
-    // Save the command and details
     $entityManager->flush();
 
-    // Send confirmation email to admin
+    $platsDetails = '';
+    foreach ($cart as $platId => $quantity) {
+        $plat = $entityManager->getRepository(Plats::class)->find($platId);
+        if ($plat) {
+            $platsDetails .= '<li>' . $plat->getPlatNom() . ' (x' . $quantity . ')</li>';
+        }
+    }
+    
+    $mailContent = '<p>Votre commande a été passée avec succès.</p>';
+    $mailContent .= '<p><strong>Plats commandés :</strong></p>';
+    $mailContent .= '<ul>' . $platsDetails . '</ul>';
+    $mailContent .= '<p><strong>Total : </strong>€' . number_format($total, 2, ',', ' ') . '</p>';
+    $mailContent .= '<p>Vous recevrez un email une fois que l\'administrateur aura confirmé votre adresse.</p>';
+    
     $mailerService->sendEmail(
-        'naeibinazari@gmail.com', // the admin's email address
-        '<p>Une nouvelle commande a été passée par ' . $user->getEmail() . '</p>' .
-        '<p>Total: €' . $total . '</p>' .
-        '<p>ID de la commande: ' . $command->getId() . '</p>',
-        'Nouvelle commande passée'
+        $user->getEmail(),
+        $mailContent,
+        'Confirmation de commande'
     );
+    
 
-    // Clear the cart after confirmation
     $session->remove('cart');
-
-    // Add flash message and redirect
     $this->addFlash('success', 'Votre commande a été passée avec succès !');
     return $this->redirectToRoute('main_plats');
 }
+#[Route('/cart/cancel/{id}', name: 'cart_cancel')]
+public function cancelOrder(
+    int $id,
+    Request $request,
+    EntityManagerInterface $entityManager,
+    MailerService $mailerService
+): Response {
+    // Fetch the command by its ID
+    $command = $entityManager->getRepository(Commands::class)->find($id);
+
+    if (!$command) {
+        $this->addFlash('danger', 'Commande introuvable.');
+        return $this->redirectToRoute('cart_detail');
+    }
+
+    $user = $this->getUser();
+    if (!$user || $command->getUser() !== $user) {
+        $this->addFlash('danger', 'Vous n\'êtes pas autorisé à annuler cette commande.');
+        return $this->redirectToRoute('cart_detail');
+    }
+
+    // Debug Step: Verify data in command
+    dump($command);
+
+    // Check if the user has confirmed the cancellation
+    if ($request->isMethod('POST')) {
+        // Debug Step: Ensure command data is correctly fetched
+        if (!$command->getTotal() || !$command->getCommandDate()) {
+            $this->addFlash('danger', 'Impossible de récupérer les détails de la commande.');
+            return $this->redirectToRoute('cart_detail');
+        }
+
+        // Remove the command
+        $entityManager->remove($command);
+        $entityManager->flush();
+
+        // Notify the admin via email
+        $adminEmail = 'admin@example.com'; // Replace with the admin's email address
+        $emailContent = sprintf(
+            '<p>L\'utilisateur <strong>%s</strong> (%s) a annulé sa commande.</p>',
+            $user->getUserNom(),
+            $user->getEmail()
+        );
+
+        $emailContent .= sprintf(
+            '<p><strong>Détails de la commande :</strong></p>
+            <ul>
+                <li><strong>ID de la commande :</strong> %d</li>
+                <li><strong>Date de la commande :</strong> %s</li>
+                <li><strong>Total :</strong> %.2f €</li>
+            </ul>',
+            $command->getCommandDate()->format('d-m-Y H:i'),
+            $command->getTotal()
+        );
+
+        $mailerService->sendEmail(
+            $adminEmail,
+            $emailContent,
+            'Commande annulée par l\'utilisateur'
+        );
+
+        $this->addFlash('success', 'Votre commande a été annulée.');
+        return $this->redirectToRoute('clients_index');
+    }
+
+    // Render confirmation page
+    return $this->render('cart/cart.html.twig', [
+        'command' => $command,
+    ]);
+}
+
 
 
 }

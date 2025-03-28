@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\CommandsRepository;
@@ -22,18 +21,19 @@ class Commands
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $command_date = null;
 
-    #[ORM\ManyToOne(inversedBy: 'commands')]
+    #[ORM\ManyToOne(targetEntity: Users::class, inversedBy: 'commands')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Users $user = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 6, scale: 2)]
     private ?string $total = null;
 
-    /**
-     * @var Collection<int, Detail>
-     */
-    #[ORM\OneToMany(targetEntity: Detail::class, mappedBy: 'commande')]
+    #[ORM\OneToMany(targetEntity: Detail::class, mappedBy: 'commande', cascade: ['remove'], orphanRemoval: true)]
     private Collection $details;
+
+
+    #[ORM\Column(length: 20)]
+    private ?string $payment_method = null;
 
     public function __construct()
     {
@@ -93,9 +93,6 @@ class Commands
         return $this;
     }
 
-    /**
-     * @return Collection<int, Detail>
-     */
     public function getDetails(): Collection
     {
         return $this->details;
@@ -114,11 +111,22 @@ class Commands
     public function removeDetail(Detail $detail): static
     {
         if ($this->details->removeElement($detail)) {
-            // set the owning side to null (unless already changed)
             if ($detail->getCommande() === $this) {
                 $detail->setCommande(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPaymentMethod(): ?string
+    {
+        return $this->payment_method;
+    }
+
+    public function setPaymentMethod(string $payment_method): static
+    {
+        $this->payment_method = $payment_method;
 
         return $this;
     }

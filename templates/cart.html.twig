@@ -71,8 +71,8 @@
                                     <h3 class="fw-bold mb-5 mt-2 pt-1">Summary</h3>
                                     <hr class="my-4">
                                     <div class="d-flex justify-content-between mb-4">
-                                        <h5 class="text-uppercase">Items {{ data|length }}</h5>
-                                        <h5>€ {{ data|reduce((carry, item) => carry + (item.plats.platPrix * item.quantite), 0) }}</h5>
+                                        <h5 class="text-uppercase">Items </h5>
+                                        <h5>{{ data|length }}</h5>
                                     </div>
                                     <hr class="my-4">
                                     <div class="d-flex justify-content-between mb-5">
@@ -81,20 +81,18 @@
                                     </div>
 
                                     {% if data is not empty %}
-                                        {% if app.user %}
-                                        <!-- If user is logged in, allow order submission -->
-                                        <form action="{{ path('cart_confirm') }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir confirmer votre commande ?');">
-                                            <button type="submit" class="btn btn-warning">
-                                                Confirm command
-                                            </button>
-                                        </form>
-                                        {% else %}
-                                            <!-- If guest, show the warning modal -->
-                                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#loginWarningModal">
-                                                Confirm Order
-                                            </button>
-                                        {% endif %}
+                                    {% if app.user %}
+                                        <!-- Button to trigger the modal -->
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#orderConfirmationModal">
+                                            Checkout
+                                        </button>
+                                    {% else %}
+                                        <!-- If guest, show login warning modal -->
+                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#loginWarningModal">
+                                            Checkout
+                                        </button>
                                     {% endif %}
+                                {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -104,6 +102,69 @@
         </div>
     </div>
 </section>
+
+<!-- Modal for order confirmation -->
+<div class="modal fade" id="orderConfirmationModal" tabindex="-1" aria-labelledby="orderConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderConfirmationModalLabel">Order Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm" action="{{ path('cart_confirm') }}" method="post">
+                    
+                    <!-- Address Confirmation -->
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Delivery Address:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="addressOption" id="useCurrentAddress" value="current" checked>
+                            <label class="form-check-label" for="useCurrentAddress">
+                                Use my current address: <strong>{{ app.user.addresse ?? 'No address available' }}</strong>,
+                                <strong>CP: {{ app.user.cp ?? 'No CP available' }}</strong>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="addressOption" id="changeAddress" value="new">
+                            <label class="form-check-label" for="changeAddress">
+                                Enter a new address
+                            </label>
+                        </div>
+                        <input type="text" id="newAddressInput" name="new_address" class="form-control mt-2" placeholder="Enter new address" style="display: none;">
+                        <input type="text" id="newCpInput" name="new_cp" class="form-control mt-2" placeholder="Enter new postal code" style="display: none;">
+                    </div>
+
+                    <!-- Payment Method Selection -->
+                    <div class="mb-3">
+                        <label for="paymentMethod" class="form-label">Choose a payment method:</label>
+                        <select id="paymentMethod" name="payment_method" class="form-select" required>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="cash">Cash</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-warning w-100" id="confirmOrderBtn">Validate Order</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("useCurrentAddress").addEventListener("change", function() {
+        document.getElementById("newAddressInput").style.display = "none";
+        document.getElementById("newCpInput").style.display = "none";
+    });
+
+    document.getElementById("changeAddress").addEventListener("change", function() {
+        document.getElementById("newAddressInput").style.display = "block";
+        document.getElementById("newCpInput").style.display = "block";
+    });
+</script>
+
+
 
 <!-- Bootstrap Modal for Warning message to user to proceed with the command -->
 <div class="modal fade" id="loginWarningModal" tabindex="-1" aria-labelledby="loginWarningModalLabel" aria-hidden="true">
@@ -123,4 +184,15 @@
       </div>
     </div>
 </div>
+<script>
+    document.getElementById("orderForm").addEventListener("submit", function(event) {
+    let cguCheckbox = document.getElementById("acceptCGU");
+    if (!cguCheckbox.checked) {
+        alert("You must accept the Terms & Conditions to proceed!");
+        event.preventDefault();
+    }
+});
+
+</script>
 {% endblock %}
+

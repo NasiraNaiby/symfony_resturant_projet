@@ -4,7 +4,15 @@
 
 <div class="container header">
     <div class="header-text mt-5 pt-4">
+        {% for label, messages in app.flashes %}
+                <div class="alert alert-{{ label }} mt-5" role="alert">
+                    {% for message in messages %}
+                    {{ message }}
+                    {% endfor %}
+               </div>
+            {% endfor %}
         <h1 class="fw-bold mt-5 pt-5 text-white">
+            
             Votre Compte
         </h1>
     </div>
@@ -24,7 +32,7 @@
             </a>
         </div>
         <div class="col">
-            <a href="#">
+            <a href="#" id="clientCommands">
                 <div class="card h-100 client-card">
                     <div class="card-body text-center">
                     <i class="fas fa-box card-icon"></i>
@@ -112,42 +120,55 @@
 
 
     <!-- user commands section -->
-    <div class="card justify-content-center" >
+    <div class="card justify-content-center" id="commandSection" style="display: none;">
         <div class="card-body">
-          <div class="table-responsive">
-            {% if app.user.commands is defined and app.user.commands is not empty %}
-    <table class="table table-hover mb-0">
-        <thead>
-            <tr>
-                <th scope="col">État de la Commande</th>
-                <th scope="col">Date</th>
-                <th scope="col">Total</th>
-                <th scope="col">Plats Commandés</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for command in app.user.commands %}
-                {% dump(command) %}
-                <tr>
-                    <td>{{ command.commandEtat }}</td>
-                    <td>{{ command.commandDate|date('d-m-Y') }}</td>
-                    <td>{{ command.total }} €</td>
-                    <td>
-                        {% for detail in command.details %}
-                            {{ detail.plat.platNom }}
-                            <br />
-                        {% endfor %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>Aucune commande trouvée.</p>
-{% endif %}
-
+            <div class="table-responsive">
+                {% if app.user.commands is defined and app.user.commands is not empty %}
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">No.</th>
+                                <th scope="col">État de la Commande</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Plats Commandés</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for command in app.user.commands %}
+                                {% dump(command) %}
+                                <tr>
+                                    <!-- loop.index is a Twig variable that automatically counts the number of loops in the current iteration -->
+                                    <td>{{ loop.index }}</td>
+                                    <td class="{% if command.commandEtat == 'pending' %}text-warning{% elseif command.commandEtat == 'confirmed' %}text-success{% endif %}">
+                                        {{ command.commandEtat }}
+                                    </td>
+                                    <td>{{ command.commandDate|date('d-m-Y') }}</td>
+                                    <td>{{ command.total }} €</td>
+                                    <td>
+                                        {% for detail in command.details %}
+                                            {{ detail.plat.platNom }}
+                                            <br />
+                                        {% endfor %}
+                                    </td>
+                                    <td class="text-danger">
+                                        <!-- Form for Cancel Action -->
+                                        <form method="post" action="{{ path('cart_cancel', { id: command.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?');">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                Annuler </i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>Aucune commande trouvée.</p>
+                {% endif %}
+            </div>
             
-    </div>
 </div>
 </div>
 

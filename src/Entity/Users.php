@@ -22,15 +22,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
     #[ORM\Column]
     private ?string $password = null;
 
@@ -46,9 +40,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20)]
     private ?string $tel = null;
 
-    /**
-     * @var Collection<int, Commands>
-     */
     #[ORM\OneToMany(targetEntity: Commands::class, mappedBy: 'user', orphanRemoval: true)]
     private Collection $commands;
 
@@ -77,32 +68,19 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     * @return list<string>
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -110,9 +88,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -125,13 +100,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        // Clear temporary sensitive data if necessary
     }
 
     public function getUserNom(): ?string
@@ -182,9 +153,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Commands>
-     */
     public function getCommands(): Collection
     {
         return $this->commands;
@@ -203,7 +171,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCommand(Commands $command): static
     {
         if ($this->commands->removeElement($command)) {
-            // set the owning side to null (unless already changed)
             if ($command->getUser() === $this) {
                 $command->setUser(null);
             }
@@ -212,7 +179,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getCp(): ?string
+    public function getCp(): ?int
     {
         return $this->cp;
     }

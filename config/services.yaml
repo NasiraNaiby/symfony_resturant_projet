@@ -11,6 +11,11 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         public: false       # Defines services as private by default for better security.
 
+    App\Entity\Commands:
+        autowire: true
+        autoconfigure: true
+        public: true 
+
     # Define PlatsAndCategoryHelper service
     App\Service\PlatsAndCategoryHelper:
         autowire: true

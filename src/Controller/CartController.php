@@ -111,7 +111,6 @@ public function deleteFromCart(SessionInterface $session, Plats $plats): Respons
     return $this->redirectToRoute('cart_detail'); // Redirect back to cart
 }
 
-
 #[Route('/cart/confirm', name: 'cart_confirm', methods: ['POST'])]
 public function confirmOrder(
     Request $request,
@@ -121,7 +120,6 @@ public function confirmOrder(
 ) {
     $user = $this->getUser();
     if (!$user) {
-        $this->addFlash('warning', 'Veuillez vous connecter pour continuer.');
         return $this->redirectToRoute('cart_detail');
     }
 
@@ -131,33 +129,38 @@ public function confirmOrder(
         return $this->redirectToRoute('cart_detail');
     }
 
-    // retrive the payment method for the payemnt 
+    // Retrieve the payment method
     $paymentMethod = $request->request->get('payment_method');
     if (!$paymentMethod) {
         $this->addFlash('danger', 'Veuillez sélectionner un mode de paiement.');
         return $this->redirectToRoute('cart_detail');
     }
 
-    // retriving the address and the postal code if the user had modified 
-    $newAddress = $request->request->get('user_address');
-    $newPostalCode = $request->request->get('user_cp');
+    // Retrieve address option and relevant fields
+    $addressOption = $request->request->get('addressOption');
+    $newAddress = $request->request->get('new_address');
+    $newPostalCode = $request->request->get('new_cp');
 
-    if (!empty($newAddress) && !empty($newPostalCode)) {
-        $user->setAddresse($newAddress);
-        $user->setCp($newPostalCode);
-        $entityManager->persist($user);
-    }
-
-    // createing the commands 
+    // Create the command
     $command = new Commands();
     $command->setCommandEtat('pending');
     $command->setCommandDate(new \DateTime());
     $command->setUser($user);
     $command->setPaymentMethod($paymentMethod);
+
+    // Set the delivery address and postal code for the command
+    if ($addressOption === 'new' && !empty($newAddress) && !empty($newPostalCode)) {
+        $command->setDeliveryAddresse($newAddress);
+        $command->setCp($newPostalCode); // Save the new postal code for this command only
+    } else {
+        $command->setDeliveryAddresse($user->getAddresse());
+        $command->setCp($user->getCp()); // Use the user's existing postal code
+    }
+
     $entityManager->persist($command);
 
+    // Calculate the total price and persist order details
     $total = 0;
-
     foreach ($cart as $platId => $quantity) {
         $plat = $entityManager->getRepository(Plats::class)->find($platId);
         if ($plat) {
@@ -171,8 +174,9 @@ public function confirmOrder(
     }
 
     $command->setTotal($total);
-    $entityManager->flush();
+    $entityManager->flush(); // Save all changes
 
+    // Prepare and send confirmation email
     $platsDetails = '';
     foreach ($cart as $platId => $quantity) {
         $plat = $entityManager->getRepository(Plats::class)->find($platId);
@@ -180,24 +184,29 @@ public function confirmOrder(
             $platsDetails .= '<li>' . $plat->getPlatNom() . ' (x' . $quantity . ')</li>';
         }
     }
-    
+
     $mailContent = '<p>Votre commande a été passée avec succès.</p>';
     $mailContent .= '<p><strong>Plats commandés :</strong></p>';
+    $mailContent .= '<p><strong>Adresse de livraison :</strong></p>';
+    $mailContent .= '<p>' . $command->getDeliveryAddresse() . '<br>Code Postal: ' . $command->getCp() . '</p>';
+    $mailContent .= '<p>Email : ' . $user->getEmail() . '<br>Téléphone : ' . ($user->getTel() ?? 'Non renseigné') . '</p>';
     $mailContent .= '<ul>' . $platsDetails . '</ul>';
     $mailContent .= '<p><strong>Total : </strong>€' . number_format($total, 2, ',', ' ') . '</p>';
     $mailContent .= '<p>Vous recevrez un email une fois que l\'administrateur aura confirmé votre adresse.</p>';
-    
+
     $mailerService->sendEmail(
         $user->getEmail(),
         $mailContent,
         'Confirmation de commande'
     );
-    
 
+    // Clear the cart and redirect
     $session->remove('cart');
     $this->addFlash('success', 'Votre commande a été passée avec succès !');
     return $this->redirectToRoute('main_plats');
 }
+
+
 #[Route('/cart/cancel/{id}', name: 'cart_cancel')]
 public function cancelOrder(
     int $id,

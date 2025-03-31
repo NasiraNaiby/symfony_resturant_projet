@@ -35,6 +35,16 @@ class Commands
     #[ORM\Column(length: 20)]
     private ?string $payment_method = null;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $delivery_addresse = null;
+
+    #[ORM\Column(length: 10, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[0-9]{5}$/',
+        message: 'Veuillez saisir un code postal valide (exactement 5 chiffres).'
+    )]
+    private ?string $cp = null;
+
     public function __construct()
     {
         $this->details = new ArrayCollection();
@@ -127,6 +137,30 @@ class Commands
     public function setPaymentMethod(string $payment_method): static
     {
         $this->payment_method = $payment_method;
+
+        return $this;
+    } 
+
+    public function getDeliveryAddresse(): ?string
+    {
+        return $this->delivery_addresse;
+    }
+
+    public function setDeliveryAddresse(?string $delivery_addresse): static
+    {
+        $this->delivery_addresse = $delivery_addresse;
+
+        return $this;
+    }
+
+    public function getCp(): ?string
+    {
+        return $this->cp;
+    }
+
+    public function setCp(?string $cp): static
+    {
+        $this->cp = $cp;
 
         return $this;
     }

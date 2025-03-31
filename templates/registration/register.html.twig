@@ -1,0 +1,96 @@
+{% extends 'main.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<section class="vh-100" style="margin-top: 6rem;">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                <div class="card bg text-white gradient-custom-2" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+
+                        <div class="mb-md-5 mt-md-4 pb-5">
+
+                            <h2 class="fw-bold mb-2 text-uppercase">Register</h2>
+                            <p class="text-white mb-5">Veuillez entrer vos informations.</p>
+
+                            {{ form_start(registrationForm, { 'attr': {'enctype': 'multipart/form-data'} }) }}
+
+                            <div class="form-outline form-white mb-3">
+                                {{ form_widget(registrationForm.email, {
+                                    'attr': {
+                                        'class': 'form-control form-control-lg',
+                                        'placeholder': 'Email..'
+                                    }
+                                }) }}
+                            </div>
+
+                            <div class="form-outline form-white mb-3">
+                                {{ form_widget(registrationForm.plainPassword, {
+                                    'attr': {
+                                        'class': 'form-control form-control-lg',
+                                        'placeholder': 'Mot de passe'
+                                    }
+                                }) }}
+                            </div>
+
+                            <div class="form-outline form-white mb-3">
+                                {{ form_widget(registrationForm.user_nom, {
+                                    'attr': {
+                                        'class': 'form-control form-control-lg',
+                                        'placeholder': 'Nom complet'
+                                    }
+                                }) }}
+                            </div>
+
+                            <div class="form-outline form-white mb-3">
+                                {{ form_widget(registrationForm.addresse, {
+                                    'attr': {
+                                        'class': 'form-control form-control-lg',
+                                        'placeholder': 'Adresse'
+                                    }
+                                }) }}
+                            </div>
+
+                            <div class="form-outline form-white mb-3">
+                                {{ form_widget(registrationForm.cp, {
+                                    'attr': {
+                                        'class': 'form-control form-control-lg',
+                                        'placeholder': 'Code postal'
+                                    }
+                                }) }}
+                            </div>
+
+                            <div class="form-outline form-white mb-3">
+                                {{ form_widget(registrationForm.tel, {
+                                    'attr': {
+                                        'class': 'form-control form-control-lg',
+                                        'placeholder': 'Téléphone'
+                                    }
+                                }) }}
+                            </div>
+
+                            <div class="form-outline form-white mb-3">
+                                {{ form_widget(registrationForm.user_photo, {
+                                    'attr': {
+                                        'class': 'form-control form-control-lg',
+                                    }
+                                }) }}
+                            </div>
+
+                            
+
+                            <button type="submit" class="btn btn-outline-light btn-lg px-5">Register</button>
+
+                            {{ form_end(registrationForm) }}
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

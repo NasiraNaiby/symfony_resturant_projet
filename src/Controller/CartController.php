@@ -244,11 +244,12 @@ public function cancelOrder(
         $entityManager->flush();
 
         // Notify the admin via email
-        $adminEmail = 'admin@example.com'; // Replace with the admin's email address
+        $adminEmail = 'admin@example.com'; //admin's email address
         $emailContent = sprintf(
             '<p>L\'utilisateur <strong>%s</strong> (%s) a annulé sa commande.</p>',
             $user->getUserNom(),
-            $user->getEmail()
+            $user->getEmail(),
+            'Commande annulée par l\'utilisateur'
         );
 
         $emailContent .= sprintf(
@@ -259,13 +260,15 @@ public function cancelOrder(
                 <li><strong>Total :</strong> %.2f €</li>
             </ul>',
             $command->getCommandDate()->format('d-m-Y H:i'),
-            $command->getTotal()
+            $command->getTotal(),
+            'Commande ajouter par l\'utilisateur'
         );
 
         $mailerService->sendEmail(
             $adminEmail,
             $emailContent,
-            'Commande annulée par l\'utilisateur'
+            'Commande annulée par l\'utilisateur',
+            'nasira@example.com'
         );
 
         $this->addFlash('success', 'Votre commande a été annulée.');

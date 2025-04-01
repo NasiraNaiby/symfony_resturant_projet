@@ -56,12 +56,6 @@ public function register(
         $entityManager->persist($user);
         $entityManager->flush();
 
-        // Send email confirmation
-        $this->mailerService->sendEmail(
-            $user->getEmail(),
-            $emailContent,
-            'Email Verification'
-        );
         $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
             (new TemplatedEmail())
                 ->from(new Address('naeibinazari@gmail.com', 'Your App Name'))
@@ -98,6 +92,6 @@ public function register(
         // @TODO Change the redirect on success and handle or remove the flash message in your templates
         $this->addFlash('success', 'Your email address has been verified.');
 
-        return $this->redirectToRoute('main_accueil');
+        return $this->redirectToRoute('clients_index');
     }
 }

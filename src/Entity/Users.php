@@ -51,6 +51,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
+  
+
     public function __construct()
     {
         $this->commands = new ArrayCollection();

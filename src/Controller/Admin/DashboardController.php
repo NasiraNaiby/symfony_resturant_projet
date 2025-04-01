@@ -53,8 +53,9 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Resturant Projet Sf');
+            ->setTitle('<a href="' . $this->generateUrl('main_accueil') . '" style="text-decoration:none; color:inherit;">The District</a>');
     }
+
 
     public function configureMenuItems(): iterable
     {
@@ -62,7 +63,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('liste des utilisateurs', 'fas fa-user', Users::class);
         yield MenuItem::linkToCrud('Categories', 'fas fa-tags', Categories::class);
         yield MenuItem::linkToCrud('Commands', 'fas fa-box', Commands::class);
-        //yield MenuItem::linkToCrud('Panier', 'fas fa-shopping-cart', Panier::class);
         yield MenuItem::linkToCrud('Plats', 'fas fa-utensils', Plats::class);
     }
 }

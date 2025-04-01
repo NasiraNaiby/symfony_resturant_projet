@@ -125,35 +125,36 @@ private function getUserOrders(EntityManagerInterface $entityManager, $user, Log
 #[Route('/search', name: 'search')]
 public function search(EntityManagerInterface $entityManager, Request $request): Response
 {
-    // Retrieve the search query and category from the request
     $query = $request->query->get('user_value', '');
     $categoryName = $request->query->get('category', '');
 
-    // Get the repository for the Plats entity
     $repository = $entityManager->getRepository(Plats::class);
 
-    // Build the query
     $queryBuilder = $repository->createQueryBuilder('p')
-        ->join('p.categorie', 'c') // Join the Categories entity
-        ->addSelect('c');         // Include category data
+        ->join('p.categorie', 'c')
+        ->addSelect('c');
 
-
-    // Filter by category name if provided
+    // **Filter by category name if provided**
     if (!empty($categoryName)) {
         $queryBuilder->andWhere('c.cat_nom = :category')
-                        ->setParameter('category', $categoryName);
+                     ->setParameter('category', $categoryName);
     }
 
-    // Execute the query and get results
+    // **Apply search query if provided**
+    if (!empty($query)) {
+        $queryBuilder->andWhere('p.plat_nom LIKE :query') 
+                     ->setParameter('query', '%' . $query . '%');
+    }
+
     $plats = $queryBuilder->getQuery()->getResult();
 
-    // Render the results in the Twig template
     return $this->render('search.html.twig', [
-        'plats' => $plats,           // Pass plats to the template
-        'query' => $query,           // Pass the search term for feedback
-        'category' => $categoryName, // Pass the selected category for feedback and highlighting
+        'plats' => $plats,
+        'query' => $query,
+        'category' => $categoryName,
     ]);
 }
+
     
 
 #[Route('/', name: 'main_accueil')]

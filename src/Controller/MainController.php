@@ -96,7 +96,7 @@ public function updateProfile(Request $request, EntityManagerInterface $entityMa
     }
 
     $commands = $this->getUserOrders($entityManager, $user);
-    dd($commands); // Output the commands
+    //dd($commands); // Output the commands
     die(); // Stop further execution temporarily to inspect
     
     return $this->render('clients/index.html.twig', [
@@ -259,7 +259,7 @@ public function accueil(EntityManagerInterface $entityManager, Request $request,
         // Fetch data for each category dynamically
         foreach ($categoryNames as $categoryName) {
             $results[$categoryName] = $this->helper->getCategoryByPlats($categoryName);
-            dump($categoryName, $results[$categoryName]); // Debugging output
+           // dump($categoryName, $results[$categoryName]); // Debugging output
         }
         
         // Pass the results to the template

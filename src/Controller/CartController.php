@@ -228,8 +228,7 @@ public function cancelOrder(
         return $this->redirectToRoute('cart_detail');
     }
 
-    // Debug Step: Verify data in command
-    dump($command);
+   
 
     // Check if the user has confirmed the cancellation
     if ($request->isMethod('POST')) {

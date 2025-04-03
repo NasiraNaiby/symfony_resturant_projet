@@ -16,6 +16,9 @@ framework:
     #fragments: true
     php_errors:
         log: true
+    router:
+        strict_requirements: null
+        default_uri: 'http://127.0.0.1:8000'
 
 when@test:
     framework:

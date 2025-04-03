@@ -58,7 +58,7 @@ public function register(
 
         $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
             (new TemplatedEmail())
-                ->from(new Address('naeibinazari@gmail.com', 'Your App Name'))
+                ->from(new Address('naeibinazari@gmail.com', 'Security Team '))
                 ->to($user->getEmail())
                 ->subject('Please Confirm Your Email')
                 ->htmlTemplate('registration/confirmation_email.html.twig')

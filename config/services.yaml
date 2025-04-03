@@ -3,6 +3,10 @@
 
 parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads'
+    router.request_context.host: '127.0.0.1'
+    router.request_context.scheme: 'http'
+    router.request_context.base_url: 'http://127.0.0.1:8000'
+
 
 services:
     # default configuration for services in *this* file

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,26 +10,33 @@ use App\Entity\Plats;
 use App\Entity\Users;
 use App\Entity\Feedback;
 use App\Entity\Categories;
+use App\Entity\Commands;
 use App\Service\PlatsAndCategoryHelper;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Service\MailerService;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Psr\Log\LoggerInterface;
 
-final class MainController extends AbstractController{
-
+final class MainController extends AbstractController
+{
     private PlatsAndCategoryHelper $helper;
     private MailerService $mailerService;
     private UserPasswordHasherInterface $passwordHasher;
+    private LoggerInterface $logger;
 
-    public function __construct(PlatsAndCategoryHelper $helper, MailerService $mailerService, UserPasswordHasherInterface $passwordHasher)
-    {
+    public function __construct(
+        PlatsAndCategoryHelper $helper,
+        MailerService $mailerService,
+        UserPasswordHasherInterface $passwordHasher,
+        LoggerInterface $logger
+    ) {
         $this->helper = $helper;
         $this->mailerService = $mailerService;
         $this->passwordHasher = $passwordHasher;
+        $this->logger = $logger;
     }
-
 
     #[Route('/main', name: 'main')]
     public function index(): Response
@@ -38,16 +44,15 @@ final class MainController extends AbstractController{
         return $this->render('main.html.twig');
     }
 
-    //client page 
-    public function clientPage(Security $security)
+    // Client page
+    public function clientPage(Security $security): Response
     {
-        // Get the currently logged-in user
         $user = $security->getUser();
 
-        // Check if a user is logged in
         if (!$user) {
             throw $this->createAccessDeniedException('You must be logged in to access this page.');
         }
+
         return $this->render('account.html.twig', [
             'user' => [
                 'userNom' => $user->getUserNom(),
@@ -56,34 +61,27 @@ final class MainController extends AbstractController{
                 'tel' => $user->getTel(),
             ],
         ]);
-        
     }
 
 #[Route('/clients/update', name: 'update_profile', methods: ['GET', 'POST'])]
-public function updateProfile(Request $request, EntityManagerInterface $entityManager, Security $security)
-{
+public function updateProfile(
+    Request $request,
+    EntityManagerInterface $entityManager,
+    Security $security
+): Response {
     $user = $security->getUser();
-
 
     if (!$user) {
         throw $this->createAccessDeniedException('You must be logged in to update your profile.');
     }
 
-    // Handle profile update (same as before)
     if ($request->isMethod('POST')) {
         $user->setUserNom($request->request->get('fullname'));
         $user->setEmail($request->request->get('email'));
         $user->setAddresse($request->request->get('addresse'));
         $user->setTel($request->request->get('tel'));
 
-        // Handles the users password change
-        $password = $request->request->get('password');
-        if (!empty($password)) {
-            $hashedPassword = $this->passwordHasher->hashPassword($user, $password);
-            $user->setPassword($hashedPassword);
-        }
-
-        // this is to handle the user  photo upload
+        // Handle user photo upload
         $photo = $request->files->get('photo');
         if ($photo) {
             $photoName = uniqid() . '.' . $photo->guessExtension();
@@ -96,24 +94,20 @@ public function updateProfile(Request $request, EntityManagerInterface $entityMa
     }
 
     $commands = $this->getUserOrders($entityManager, $user);
-    //dd($commands); // Output the commands
-    die(); // Stop further execution temporarily to inspect
     
     return $this->render('clients/index.html.twig', [
         'commands' => $commands,
     ]);
- 
 }
 
-private function getUserOrders(EntityManagerInterface $entityManager, $user, LoggerInterace $logger)
+private function getUserOrders(EntityManagerInterface $entityManager, Users $user): array
 {
+    $this->logger->info('getUserOrders function called');
 
-  
-    $logger->info('getUserOrders function called');
     return $entityManager->getRepository(Commands::class)
         ->createQueryBuilder('c')
-        ->leftJoin('c.detail', 'd')
-        ->leftJoin('d.plat', 'p')
+        ->leftJoin('c.details', 'd') 
+        ->leftJoin('d.plat', 'p')    
         ->addSelect('d', 'p')
         ->select('c.command_etat', 'c.command_date', 'c.total', 'p.plat_nom')
         ->where('c.user = :user')
@@ -121,6 +115,39 @@ private function getUserOrders(EntityManagerInterface $entityManager, $user, Log
         ->getQuery()
         ->getResult();
 }
+
+#[Route('/password/update', name: 'update_password', methods: ['GET', 'POST'])]
+public function updatePassword(
+    Request $request,
+    EntityManagerInterface $entityManager,
+    Security $security,
+    UserPasswordHasherInterface $passwordHasher 
+): Response {
+    $user = $security->getUser();
+
+    if (!$user) {
+        throw $this->createAccessDeniedException('You must be logged in to change your password.');
+    }
+
+    $password = $request->request->get('password');
+    $confirmPassword = $request->request->get('confirmPassword');
+
+    // Validate that passwords match
+    if ($password !== $confirmPassword) {
+        return $this->json(['error' => 'Passwords do not match.'], Response::HTTP_BAD_REQUEST);
+    }
+
+    // Hash the new password
+    $hashedPassword = $passwordHasher->hashPassword($user, $password);
+    $user->setPassword($hashedPassword);
+
+    $entityManager->persist($user);
+    $entityManager->flush();
+    $this->addFlash('success', 'Votre mot de pass a été mise a jour!.');
+    return $this->render('clients/index.html.twig');
+}
+
+
 
 #[Route('/search', name: 'search')]
 public function search(EntityManagerInterface $entityManager, Request $request): Response

@@ -42,19 +42,20 @@
                 </div>
             </a>
         </div>
-        <div class="col">
-            <a href="#">
+        <div class="col" >
+            <a href="#" id="clientchangePassword">
                 <div class="card h-100 client-card">
                     <div class="card-body text-center">
-                        <i class="fas fa-address-card card-icon"></i>
-                        <h5 class="card-title">Adresses</h5>
-                        <p class="card-text">Modifier les adresses et les préférences de livraison des commandes et des cadeaux</p>
+                        <i class="fas fa-key card-icon"></i> 
+                        <h5 class="card-title">Mot de passe</h5> <!-- Updated the title -->
+                        <p class="card-text">Modifier votre mot de passe et gérer les paramètres de sécurité</p> <!-- Updated the description -->
                     </div>
                 </div>
             </a>
         </div>
+        
         <div class="col">
-            <a href="#">
+            <a href="{{ path('main_contact') }}">
                 <div class="card h-100 client-card">
                     <div class="card-body text-center">
                         <i class="fas fa-phone card-icon"></i>
@@ -88,7 +89,7 @@
             </div>
             <div class="row mb-3">
                 <div class="form-group col-md-6">
-                    <input type="password" class="form-control mb-2" id="password" name="password" placeholder="mot de pass">
+                    <input type="text" class="form-control mb-2" id="addresse" name="addresse" value="{{ app.user.addresse }}">
                 </div>
                 <div class="form-group col-md-6" style="position: relative;">
                     <input type="file" class="form-control" id="photo" name="photo" >
@@ -98,9 +99,7 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <div class="form-group col-md-6">
-                    <input type="text" class="form-control mb-2" id="addresse" name="addresse" value="{{ app.user.addresse }}">
-                </div>
+                
                 <div class="form-group col-md-6">
                     <input type="text" class="form-control mb-2" id="codePostal" name="codePostal" placeholder="codePostal"  value="{{ app.user.cp }}">
                 </div>
@@ -114,60 +113,98 @@
             <button type="submit" class="btn btn-primary mt-3 mb-3">Update</button>
         </form>
         {% else %}
-    <p>No user data available.</p>
-    {% endif %}
+        <p>No user data available.</p>
+        {% endif %}
     </div>
 
 
+    <!-- change password -->
+<div id="client-section">
+    {% if app.user %}
+    <form id="changePassword" method="POST" action="/password/update" style="display: none;" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="update">
+        <!-- <input type="hidden" name="clId" value="<?php echo $clientId; ?>"> -->
+        <div class="row mb-3">
+            <div class="form-group col-md-6 position-relative">
+                <label for="password" class="form-label">New Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" onkeyup="validatePassword()" placeholder="Enter new password">
+                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('password')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            
+                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" onkeyup="validatePassword()" placeholder="Confirm password">
+                    <button type="button" class="btn btn-outline-secondary" onclick="togglePasswordVisibility('confirmPassword')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            
+            <button type="submit" class="btn btn-primary mt-3 mb-4 w-100" onclick="return validatePassword()">Update Password</button>
+        </div>
+        </div>
+        
+        <p id="passwordError" class="text-danger"></p>
+        
+       
+        
+    </form>
+    {% else %}
+<p>No user data available.</p>
+{% endif %}
+</div>
+
     <!-- user commands section -->
-    <div class="card justify-content-center" id="commandSection" style="display: none;">
-        <div class="card-body">
-            <div class="table-responsive">
-                {% if app.user.commands is defined and app.user.commands is not empty %}
-                    <table class="table table-hover mb-0">
-                        <thead>
-                            <tr>
-                                <th scope="col">No.</th>
-                                <th scope="col">État de la Commande</th>
-                                <th scope="col">Date</th>
-                                <th scope="col">Total</th>
-                                <th scope="col">Plats Commandés</th>
-                                <th scope="col">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for command in app.user.commands %}
-                                {% dump(command) %}
-                                <tr>
-                                    <!-- loop.index is a Twig variable that automatically counts the number of loops in the current iteration -->
-                                    <td>{{ loop.index }}</td>
-                                    <td class="{% if command.commandEtat == 'pending' %}text-warning{% elseif command.commandEtat == 'confirmed' %}text-success{% endif %}">
-                                        {{ command.commandEtat }}
-                                    </td>
-                                    <td>{{ command.commandDate|date('d-m-Y') }}</td>
-                                    <td>{{ command.total }} €</td>
-                                    <td>
-                                        {% for detail in command.details %}
-                                            {{ detail.plat.platNom }}
-                                            <br />
-                                        {% endfor %}
-                                    </td>
-                                    <td class="text-danger">
-                                        <!-- Form for Cancel Action -->
-                                        <form method="post" action="{{ path('cart_cancel', { id: command.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?');">
-                                            <button type="submit" class="btn btn-danger btn-sm">
-                                                Annuler </i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <p>Aucune commande trouvée.</p>
-                {% endif %}
-            </div>
+<div class="card justify-content-center mb-3" id="commandSection" style="display: none;">
+<div class="card-body">
+    <div class="table-responsive">
+        {% if app.user.commands is defined and app.user.commands is not empty %}
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">État de la Commande</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Plats Commandés</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for command in app.user.commands %}
+                        {% dump(command) %}
+                        <tr>
+                            <!-- loop.index is a Twig variable that automatically counts the number of loops in the current iteration -->
+                            <td>{{ loop.index }}</td>
+                            <td class="{% if command.commandEtat == 'pending' %}text-warning{% elseif command.commandEtat == 'confirmed' %}text-success{% endif %}">
+                                {{ command.commandEtat }}
+                            </td>
+                            <td>{{ command.commandDate|date('d-m-Y') }}</td>
+                            <td>{{ command.total }} €</td>
+                            <td>
+                                {% for detail in command.details %}
+                                    {{ detail.plat.platNom }}
+                                    <br />
+                                {% endfor %}
+                            </td>
+                            <td class="text-danger">
+                                <!-- Form for Cancel Action -->
+                                <form method="post" action="{{ path('cart_cancel', { id: command.id }) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?');">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Annuler </i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Aucune commande trouvée.</p>
+        {% endif %}
+    </div>
             
 </div>
 </div>
@@ -176,5 +213,60 @@
 </div>
 </section>
 
+<script>
+         document.addEventListener("DOMContentLoaded", function () {
+        const editClientpasswordButton = document.getElementById("clientchangePassword");
+        if (editClientpasswordButton) {
+            editClientpasswordButton.addEventListener("click", function (event) {
+                event.preventDefault();
+                var form = document.getElementById("changePassword");
+                if (form) {
+                    form.style.display = form.style.display === "none" ? "block" : "none";
+                }
+            });
+        }
+    });
+    
+
+    function togglePasswordVisibility(fieldId) {
+    const field = document.getElementById(fieldId);
+    const icon = field.nextElementSibling.querySelector('i');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
+function validatePassword() {
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const errorMessage = document.getElementById('passwordError');
+
+    const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).{6,}$/;
+
+    if (!passwordPattern.test(password.value)) {
+        errorMessage.innerHTML = "Password must be at least 6 characters and include letters, numbers, and symbols.";
+        return false;
+    }
+    
+    if (confirmPassword.value.length > 0 && password.value !== confirmPassword.value) {
+        errorMessage.innerHTML = "Passwords do not match!";
+        return false;
+    }
+
+    errorMessage.innerHTML = ""; // Clear errors if validation passes
+    return true;
+}
+
+// Add live validation while typing
+document.getElementById('password').addEventListener('input', validatePassword);
+document.getElementById('confirmPassword').addEventListener('input', validatePassword);
+
+
+</script>
 
 {% endblock %}

@@ -227,9 +227,6 @@ public function cancelOrder(
         $this->addFlash('danger', 'Vous n\'êtes pas autorisé à annuler cette commande.');
         return $this->redirectToRoute('cart_detail');
     }
-
-   
-
     // Check if the user has confirmed the cancellation
     if ($request->isMethod('POST')) {
         // Debug Step: Ensure command data is correctly fetched

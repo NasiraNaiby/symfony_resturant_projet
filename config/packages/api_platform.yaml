@@ -1,0 +1,9 @@
+api_platform:
+    enable_docs: true
+    enable_swagger_ui: true
+    title: Hello API Platform
+    version: 1.0.0
+    defaults:
+        stateless: true
+        cache_headers:
+            vary: ['Content-Type', 'Authorization', 'Origin']

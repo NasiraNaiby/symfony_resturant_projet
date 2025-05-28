@@ -7,8 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: PlatsRepository::class)]
+#[ApiResource(
+    operations: ['get', 'post', 'put', 'delete']
+)]
 class Plats
 {
     #[ORM\Id]
@@ -22,13 +26,13 @@ class Plats
     #[ORM\Column(type: Types::TEXT)]
     private ?string $plat_description = null;
 
-    #[ORM\Column(type: "float")] // Ensure the price is stored as a float
+    #[ORM\Column(type: "float")] 
     private ?float $plat_prix = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $plat_photo = null;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => false])] // Define as Boolean with default
+    #[ORM\Column(type: 'boolean', options: ['default' => false])] 
     private ?bool $active = false; // Default value is inactive
 
     #[ORM\ManyToOne(inversedBy: 'plats')]
@@ -75,7 +79,7 @@ class Plats
         return $this;
     }
 
-    // The getter and setter for plat_prix are already defined correctly for a float type.
+    
     public function getPlatPrix(): ?float
     {
         return $this->plat_prix;
@@ -100,12 +104,12 @@ class Plats
         return $this;
     }
 
-    public function getActive(): ?bool // Update type to Boolean
+    public function getActive(): ?bool 
     {
         return $this->active;
     }
 
-    public function setActive(bool $active): static // Update type to Boolean
+    public function setActive(bool $active): static 
     {
         $this->active = $active;
 
@@ -145,7 +149,7 @@ class Plats
     public function removeDetail(Detail $detail): static
     {
         if ($this->details->removeElement($detail)) {
-            // set the owning side to null (unless already changed)
+            
             if ($detail->getPlat() === $this) {
                 $detail->setPlat(null);
             }

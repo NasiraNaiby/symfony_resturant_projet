@@ -1,9 +1,9 @@
-# 🍽️ THE DISTRICT - Système de Commande de Restaurant (Symfony)
+#  THE DISTRICT - Système de Commande de Restaurant (Symfony)
 
-## 📌 Présentation du Projet
+##  Présentation du Projet
 THE DISTRICT est un système de commande de restaurant basé sur le framework Symfony (architecture MVC). Il permet aux utilisateurs de parcourir les catégories, consulter les plats, ajouter des articles à leur panier et passer commande. Le système inclut l'authentification et un contrôle d'accès basé sur les rôles.
 
-## 🚀 Fonctionnalités
+## Fonctionnalités
 - Modèle de données basé sur des entités (Doctrine ORM)
 - Gestion des catégories et des plats
 - Fonctionnalité de panier
@@ -12,7 +12,7 @@ THE DISTRICT est un système de commande de restaurant basé sur le framework Sy
 - Design responsive et mobile (Bootstrap)
 - Gestion des rôles (Admin, Client)
 
-## 🛠️ Technologies Utilisées
+##  Technologies Utilisées
 - Symfony (PHP)
 - Doctrine (ORM)
 - MySQL (Base de données)
@@ -20,12 +20,12 @@ THE DISTRICT est un système de commande de restaurant basé sur le framework Sy
 - Twig (Moteur de templates)
 
 ---
-## 🚀 État du projet
+## État du projet
 
 Ce projet est en cours de développement.  
 Certaines fonctionnalités peuvent être incomplètes ou nécessiter des améliorations.  
 Toute contribution ou suggestion est la bienvenue pour l'améliorer !
-## 🔧 Guide d’Installation
+##  Guide d’Installation
 
 ### 1️⃣ Cloner le dépôt
 ```bash

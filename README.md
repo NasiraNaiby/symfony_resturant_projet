@@ -10,7 +10,7 @@ THE DISTRICT est un système de commande de restaurant basé sur le framework Sy
 - Authentification des utilisateurs & gestion des rôles
 - Traitement des commandes & envoi d'e-mails de confirmation
 - Design responsive et mobile (Bootstrap)
-- Gestion des rôles (Admin, Chef, Client)
+- Gestion des rôles (Admin, Client)
 
 ## 🛠️ Technologies Utilisées
 - Symfony (PHP)

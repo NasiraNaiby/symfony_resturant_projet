@@ -10,9 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: CategoriesRepository::class)]
-#[ApiResource(
-    operations: ['get', 'post', 'put', 'delete']
-)]
+
 class Categories
 {
     #[ORM\Id]

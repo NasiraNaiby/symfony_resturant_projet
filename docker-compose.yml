@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   php:
     image: php:8.2-fpm
@@ -8,17 +6,17 @@ services:
     volumes:
       - .:/var/www/html
     depends_on:
-      - mariadb
+      - db
 
-  mariadb:
-    image: mariadb:10.11.13
-    container_name: mariadb_container
+  db:
+    image: mariadb
     restart: always
+    container_name: mariadb_container
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: Afpa1234
+      MYSQL_DATABASE: sf_district
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: Afpa1234
     ports:
       - "3306:3306"
     volumes:

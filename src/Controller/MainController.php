@@ -188,19 +188,19 @@ public function search(EntityManagerInterface $entityManager, Request $request):
 public function accueil(EntityManagerInterface $entityManager, Request $request, MailerService $mailerService): Response
 {
    // Fetch existing feedbacks (limit to 3)
-    $repository = $entityManager->getRepository(Users::class);
-    $feedbacksList = $repository->findAll();
-    $feedbacksList = array_slice($feedbacksList, 0, 3);
+    // $repository = $entityManager->getRepository(Users::class);
+    // $feedbacksList = $repository->findAll();
+    // $feedbacksList = array_slice($feedbacksList, 0, 3);
 
-    // try {
-    //     $repository = $entityManager->getRepository(Users::class);
-    //     $feedbacksList = $repository->findAll();
-    //     $feedbacksList = array_slice($feedbacksList, 0, 3);
-    // } catch (\Doctrine\ORM\ORMException $e) {
-    //     $logger->error("Database error: " . $e->getMessage());
+    try {
+        $repository = $entityManager->getRepository(Users::class);
+        $feedbacksList = $repository->findAll();
+        $feedbacksList = array_slice($feedbacksList, 0, 3);
+    } catch (\Doctrine\ORM\ORMException $e) {
+        $logger->error("Database error: " . $e->getMessage());
 
-    //     return new Response("Error fetching users. Please contact support.");
-    // }
+        return new Response("Error fetching users. Please contact support.");
+    }
 
     $filepath = "/uploads/";
 

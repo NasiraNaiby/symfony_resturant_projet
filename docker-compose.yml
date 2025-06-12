@@ -32,5 +32,17 @@ services:
     ports:
       - "8081:80"
 
+  symfony:
+    image: php:8.2-cli
+    container_name: symfony_container
+    restart: always
+    working_dir: /var/www/resturant_projet_sf
+    volumes:
+      - .:/var/www/resturant_projet_sf
+    depends_on:
+      - db
+    command: >
+      bash -c "composer install && symfony server:start"
+
 volumes:
   mariadb_data:

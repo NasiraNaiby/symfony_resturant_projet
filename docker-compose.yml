@@ -1,4 +1,16 @@
 services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx_container
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/resturant_projet_sf
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - php
+
+  
   php:
     image: php:8.2-fpm
     container_name: php_container
